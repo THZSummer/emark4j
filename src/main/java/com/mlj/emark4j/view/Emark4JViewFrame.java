@@ -5,9 +5,7 @@ import javax.swing.text.DefaultStyledDocument;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import java.awt.*;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+import java.awt.event.*;
 
 /**
  * 2022/09/03：
@@ -30,9 +28,9 @@ public class Emark4JViewFrame {
         };
     }
 
-    private JFrame frame;    //主窗口
-    private JTextPane textPane;
-    private DefaultStyledDocument styledDocument;
+    private final JFrame frame;    //主窗口
+    private final JTextPane textPane;
+    private final DefaultStyledDocument styledDocument;
 
     public Emark4JViewFrame() {
         this.frame = new JFrame();
@@ -71,7 +69,6 @@ public class Emark4JViewFrame {
     public void show() {
         this.frame.setTitle("Emark4J");
         this.frame.setMinimumSize(new Dimension(800, 900));
-        this.frame.setAlwaysOnTop(true);
         this.frame.setLocationRelativeTo(null);
         this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -99,11 +96,28 @@ public class Emark4JViewFrame {
 
     private void registerKey() {
         this.textPane.registerKeyboardAction(e -> styledDocument.setParagraphAttributes(textPane.getSelectionStart(), textPane.getSelectionEnd() - textPane.getSelectionStart(), styledDocument.getStyle("header0"), true), "Ctrl+0", KeyStroke.getKeyStroke('0', InputEvent.CTRL_MASK), JComponent.WHEN_FOCUSED);
-        this.textPane.registerKeyboardAction(e -> styledDocument.setParagraphAttributes(textPane.getSelectionStart(), textPane.getSelectionEnd() - textPane.getSelectionStart(), styledDocument.getStyle("header1"), true), "Ctrl+1", KeyStroke.getKeyStroke('1', InputEvent.CTRL_MASK), JComponent.WHEN_FOCUSED);
-        this.textPane.registerKeyboardAction(e -> styledDocument.setParagraphAttributes(textPane.getSelectionStart(), textPane.getSelectionEnd() - textPane.getSelectionStart(), styledDocument.getStyle("header2"), true), "Ctrl+2", KeyStroke.getKeyStroke('2', InputEvent.CTRL_MASK), JComponent.WHEN_FOCUSED);
-        this.textPane.registerKeyboardAction(e -> styledDocument.setParagraphAttributes(textPane.getSelectionStart(), textPane.getSelectionEnd() - textPane.getSelectionStart(), styledDocument.getStyle("header3"), true), "Ctrl+3", KeyStroke.getKeyStroke('3', InputEvent.CTRL_MASK), JComponent.WHEN_FOCUSED);
-        this.textPane.registerKeyboardAction(e -> styledDocument.setParagraphAttributes(textPane.getSelectionStart(), textPane.getSelectionEnd() - textPane.getSelectionStart(), styledDocument.getStyle("header4"), true), "Ctrl+4", KeyStroke.getKeyStroke('4', InputEvent.CTRL_MASK), JComponent.WHEN_FOCUSED);
-        this.textPane.registerKeyboardAction(e -> styledDocument.setParagraphAttributes(textPane.getSelectionStart(), textPane.getSelectionEnd() - textPane.getSelectionStart(), styledDocument.getStyle("header5"), true), "Ctrl+5", KeyStroke.getKeyStroke('5', InputEvent.CTRL_MASK), JComponent.WHEN_FOCUSED);
-        this.textPane.registerKeyboardAction(e -> styledDocument.setParagraphAttributes(textPane.getSelectionStart(), textPane.getSelectionEnd() - textPane.getSelectionStart(), styledDocument.getStyle("header6"), true), "Ctrl+6", KeyStroke.getKeyStroke('6', InputEvent.CTRL_MASK), JComponent.WHEN_FOCUSED);
+
+        this.textPane.registerKeyboardAction(new HeaderAction('1'), "Ctrl+1", KeyStroke.getKeyStroke('1', InputEvent.CTRL_MASK), JComponent.WHEN_FOCUSED);
+        this.textPane.registerKeyboardAction(new HeaderAction('2'), "Ctrl+2", KeyStroke.getKeyStroke('2', InputEvent.CTRL_MASK), JComponent.WHEN_FOCUSED);
+        this.textPane.registerKeyboardAction(new HeaderAction('3'), "Ctrl+3", KeyStroke.getKeyStroke('3', InputEvent.CTRL_MASK), JComponent.WHEN_FOCUSED);
+        this.textPane.registerKeyboardAction(new HeaderAction('4'), "Ctrl+4", KeyStroke.getKeyStroke('4', InputEvent.CTRL_MASK), JComponent.WHEN_FOCUSED);
+        this.textPane.registerKeyboardAction(new HeaderAction('5'), "Ctrl+5", KeyStroke.getKeyStroke('5', InputEvent.CTRL_MASK), JComponent.WHEN_FOCUSED);
+        this.textPane.registerKeyboardAction(new HeaderAction('6'), "Ctrl+6", KeyStroke.getKeyStroke('6', InputEvent.CTRL_MASK), JComponent.WHEN_FOCUSED);
+    }
+
+    private class HeaderAction implements ActionListener {
+
+        private final char keyCode;
+
+        private HeaderAction(char keyCode) {
+            this.keyCode = keyCode;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            boolean containsAttributes = textPane.getParagraphAttributes().containsAttributes(styledDocument.getStyle("header" + keyCode));
+            Style style = containsAttributes ? styledDocument.getStyle("header0") : styledDocument.getStyle("header" + keyCode);
+            styledDocument.setParagraphAttributes(textPane.getSelectionStart(), textPane.getSelectionEnd() - textPane.getSelectionStart(), style, true);
+        }
     }
 }
