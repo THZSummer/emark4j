@@ -1,0 +1,178 @@
+{
+  "type": "object",
+  "required": [
+    "id",
+    "name",
+    "sections",
+    "modules"
+  ],
+  "definitions": {
+    "level": {
+      "type": "integer",
+      "enum": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ]
+    },
+    "font": {
+      "type": "object",
+      "required": [
+        "fontSize"
+      ],
+      "properties": {
+        "fontFamily": {
+          "type": "string",
+          "default": "微软雅黑"
+        },
+        "fontSize": {
+          "type": "integer",
+          "default": 16
+        },
+        "fontWeight": {
+          "type": "integer",
+          "default": 100
+        },
+        "horizontal": {
+          "type": "integer",
+          "default": 0
+        },
+        "vertical": {
+          "type": "integer",
+          "default": 0
+        }
+      },
+      "default": {
+      }
+    },
+    "color": {
+      "type": "object",
+      "properties": {
+        "foreColor": {
+          "type": "string",
+          "default": "#00000000",
+          "pattern": "^#([a-fA-F0-9]{8}|([a-fA-F0-9]{6}|[a-fA-F0-9]{3}))$"
+        },
+        "backColor": {
+          "type": "string",
+          "default": "#FFFFFFFF",
+          "pattern": "^#([a-fA-F0-9]{8}|([a-fA-F0-9]{6}|[a-fA-F0-9]{3}))$"
+        }
+      },
+      "default": {
+      }
+    },
+    "style": {
+      "type": "object",
+      "required": [
+        "font"
+      ],
+      "properties": {
+        "font": {
+          "$ref": "#/definitions/font",
+          "default": {}
+        },
+        "color": {
+          "$ref": "#/definitions/color",
+          "default": {}
+        }
+      },
+      "default": {
+      }
+    },
+    "header": {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "regex",
+        "level",
+        "style"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "default": "header_0",
+          "pattern": "^header_[0-6]$"
+        },
+        "name": {
+          "type": "string",
+          "default": "header0",
+          "pattern": "^header[0-6]$"
+        },
+        "regex": {
+          "type": "string",
+          "default": "^.*$"
+        },
+        "level": {
+          "$ref": "#/definitions/level"
+        },
+        "style": {
+          "$ref": "#/definitions/style"
+        }
+      },
+      "default": {
+      }
+    }
+  },
+  "properties": {
+    "test": {
+      "default": true
+    },
+    "id": {
+      "type": "string",
+      "default": "emark4j"
+    },
+    "name": {
+      "type": "string",
+      "default": "emark4j"
+    },
+    "sections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "data"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "default": "body"
+          },
+          "name": {
+            "type": "string",
+            "default": "body"
+          },
+          "data": {
+            "type": "object",
+            "default": {}
+          }
+        }
+      }
+    },
+    "modules": {
+      "type": "object",
+      "required": [
+        "headers"
+      ],
+      "properties": {
+        "headers": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 7,
+          "items": {
+            "$ref": "#/definitions/header"
+          },
+          "default": [
+          ]
+        }
+      }
+    }
+  }
+}
