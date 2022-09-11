@@ -21,89 +21,145 @@
       }
     }
   ],
-  "modules": {
-    "headers": [
-      {
-        "id": "header_0",
-        "name": "header0",
-        "regex": "^.*$",
-        "level": 0,
-        "style": {
-          "font": {
-            "fontSize": 16
-          },
-          "color": {
-            "foreColor": "#00000000",
-            "backColor": "#FFFFFFFF"
-          }
-        }
+  "styles": [
+    {
+      "id": "header_0",
+      "name": "Header0",
+      "pattern": "^header_[0-6]$",
+      "regex": "^.*$",
+      "level": 0,
+      "keymaps": [
+        [
+          "Ctrl",
+          "0"
+        ]
+      ],
+      "font": {
+        "fontSize": 16,
+        "fontFamily": "微软雅黑"
       },
-      {
-        "id": "header_1",
-        "name": "header1",
-        "regex": "^#.*$",
-        "level": 1,
-        "style": {
-          "font": {
-            "fontSize": 24
-          }
-        }
-      },
-      {
-        "id": "header_2",
-        "name": "header2",
-        "regex": "^##.*$",
-        "level": 2,
-        "style": {
-          "font": {
-            "fontSize": 20
-          }
-        }
-      },
-      {
-        "id": "header_3",
-        "name": "header3",
-        "regex": "^###.*$",
-        "level": 3,
-        "style": {
-          "font": {
-            "fontSize": 18
-          }
-        }
-      },
-      {
-        "id": "header_4",
-        "name": "header4",
-        "regex": "^####.*$",
-        "level": 4,
-        "style": {
-          "font": {
-            "fontSize": 16
-          }
-        }
-      },
-      {
-        "id": "header_5",
-        "name": "header5",
-        "regex": "^#####.*$",
-        "level": 5,
-        "style": {
-          "font": {
-            "fontSize": 14
-          }
-        }
-      },
-      {
-        "id": "header_6",
-        "name": "header6",
-        "regex": "^######.*$",
-        "level": 6,
-        "style": {
-          "font": {
-            "fontSize": 12
-          }
-        }
+      "color": {
+        "foreColor": "#00000000",
+        "backColor": "#FFFFFFFF"
       }
-    ]
-  }
+    },
+    {
+      "id": "header_1",
+      "name": "Header1",
+      "pattern": "^header_[0-6]$",
+      "regex": "^#.*$",
+      "level": 1,
+      "keymaps": [
+        [
+          "Ctrl",
+          "1"
+        ]
+      ],
+      "font": {
+        "fontSize": 24
+      }
+    },
+    {
+      "id": "header_2",
+      "name": "Header2",
+      "pattern": "^header_[0-6]$",
+      "regex": "^##.*$",
+      "level": 2,
+      "keymaps": [
+        [
+          "Ctrl",
+          "2"
+        ]
+      ],
+      "font": {
+        "fontSize": 20
+      }
+    },
+    {
+      "id": "header_3",
+      "name": "Header3",
+      "pattern": "^header_[0-6]$",
+      "regex": "^###.*$",
+      "level": 3,
+      "keymaps": [
+        [
+          "Ctrl",
+          "3"
+        ]
+      ],
+      "font": {
+        "fontSize": 18
+      }
+    },
+    {
+      "id": "header_4",
+      "name": "Header4",
+      "pattern": "^header_[0-6]$",
+      "regex": "^####.*$",
+      "level": 4,
+      "keymaps": [
+        [
+          "Ctrl",
+          "4"
+        ]
+      ],
+      "font": {
+        "fontSize": 16
+      }
+    },
+    {
+      "id": "header_5",
+      "name": "Header5",
+      "pattern": "^header_[0-6]$",
+      "regex": "^#####.*$",
+      "level": 5,
+      "keymaps": [
+        [
+          "Ctrl",
+          "5"
+        ]
+      ],
+      "font": {
+        "fontSize": 14
+      }
+    },
+    {
+      "id": "header_6",
+      "name": "Header6",
+      "pattern": "^header_[0-6]$",
+      "regex": "^######.*$",
+      "level": 6,
+      "keymaps": [
+        [
+          "Ctrl",
+          "6"
+        ]
+      ],
+      "font": {
+        "fontSize": 12
+      }
+    },
+    {
+      "id": "action_file_open",
+      "name": "ActionFileOpen",
+      "pattern": "^action_file_[0-9a-zA-Z]+$",
+      "keymaps": [
+        [
+          "Ctrl",
+          "O"
+        ]
+      ]
+    },
+    {
+      "id": "action_file_save",
+      "name": "ActionFileSave",
+      "pattern": "^action_file_[0-9a-zA-Z]+$",
+      "keymaps": [
+        [
+          "Ctrl",
+          "S"
+        ]
+      ]
+    }
+  ]
 }

@@ -53,7 +53,7 @@
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <manifestEntries>
-                                        <Main-Class>com.mlj.emark4j.view.Emark4JView</Main-Class>
+                                        <Main-Class>com.mlj.emark4j.Emark4J</Main-Class>
                                         <Build-Number>1001</Build-Number>
                                     </manifestEntries>
                                 </transformer>

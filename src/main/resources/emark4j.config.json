@@ -4,9 +4,65 @@
     "id",
     "name",
     "sections",
-    "modules"
+    "styles"
   ],
   "definitions": {
+    "key": {
+      "type": "string",
+      "enum": [
+        "Ctrl",
+        "Shift",
+        "Alt",
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F",
+        "G",
+        "H",
+        "I",
+        "J",
+        "K",
+        "L",
+        "M",
+        "N",
+        "O",
+        "P",
+        "Q",
+        "R",
+        "S",
+        "T",
+        "U",
+        "V",
+        "W",
+        "X",
+        "Y",
+        "Z"
+      ]
+    },
+    "keymap": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/key"
+      }
+    },
+    "keymaps": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/definitions/keymap"
+      },
+      "default": [
+      ]
+    },
     "level": {
       "type": "integer",
       "enum": [
@@ -66,12 +122,59 @@
       "default": {
       }
     },
+    "scope": {
+      "type": "string",
+      "enum": [
+        "paragraph",
+        "character"
+      ]
+    },
+    "scopes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/scope"
+      }
+    },
     "style": {
       "type": "object",
       "required": [
-        "font"
+        "id",
+        "name",
+        "pattern",
+        "keymaps"
       ],
       "properties": {
+        "id": {
+          "type": "string",
+          "default": "style_0",
+          "pattern": "style_[0-9a-zA-Z]+|header_[0-6]|action_file_[0-9a-zA-Z]+"
+        },
+        "name": {
+          "type": "string",
+          "default": "Style0",
+          "pattern": "Style[0-9a-zA-Z]+|Header[0-6]|ActionFile[0-9A-Z][0-9a-zA-Z]+"
+        },
+        "pattern": {
+          "type": "string",
+          "enum": [
+            "^style_[0-9a-zA-Z]+$",
+            "^header_[0-6]$",
+            "^action_file_[0-9a-zA-Z]+$"
+          ]
+        },
+        "regex": {
+          "type": "string",
+          "default": "^.*$"
+        },
+        "level": {
+          "$ref": "#/definitions/level"
+        },
+        "keymaps": {
+          "$ref": "#/definitions/keymaps"
+        },
+        "scopes": {
+          "$ref": "#/definitions/scopes"
+        },
         "font": {
           "$ref": "#/definitions/font",
           "default": {}
@@ -117,12 +220,56 @@
       },
       "default": {
       }
+    },
+    "headers": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 7,
+      "items": {
+        "$ref": "#/definitions/header"
+      },
+      "default": [
+      ]
+    },
+    "module": {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "data"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "enum": [
+            "header_s",
+            "keymap_s"
+          ],
+          "default": "header_s"
+        },
+        "name": {
+          "type": "string",
+          "enum": [
+            "headers",
+            "keymaps"
+          ],
+          "default": "headers"
+        },
+        "data": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/headers"
+            },
+            {
+              "$ref": "#/definitions/keymaps"
+            }
+          ]
+        }
+      },
+      "default": {}
     }
   },
   "properties": {
-    "test": {
-      "default": true
-    },
     "id": {
       "type": "string",
       "default": "emark4j"
@@ -156,22 +303,10 @@
         }
       }
     },
-    "modules": {
-      "type": "object",
-      "required": [
-        "headers"
-      ],
-      "properties": {
-        "headers": {
-          "type": "array",
-          "minItems": 1,
-          "maxItems": 7,
-          "items": {
-            "$ref": "#/definitions/header"
-          },
-          "default": [
-          ]
-        }
+    "styles": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/style"
       }
     }
   }
