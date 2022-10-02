@@ -1,5 +1,8 @@
 package com.mlj.emark4j.bean;
 
+import com.alibaba.fastjson.JSONObject;
+import com.mlj.emark4j.util.JsonUtil;
+
 import java.io.InputStream;
 
 /**
@@ -8,7 +11,17 @@ import java.io.InputStream;
  * @author MLJ
  */
 public class Emark4JConfig {
-    public Emark4JConfig(InputStream config) {
+    private JSONObject jsonObject;
 
+    public Emark4JConfig(InputStream configStream) {
+        this.jsonObject = JsonUtil.read(configStream);
+    }
+
+    public JSONObject getJsonObject() {
+        return jsonObject;
+    }
+
+    public void setJsonObject(JSONObject jsonObject) {
+        this.jsonObject = jsonObject;
     }
 }
