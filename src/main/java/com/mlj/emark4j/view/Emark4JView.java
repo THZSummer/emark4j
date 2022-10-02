@@ -1,7 +1,5 @@
 package com.mlj.emark4j.view;
 
-import com.mlj.emark4j.bean.module.DocumentManager;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
@@ -13,30 +11,13 @@ import java.awt.event.KeyEvent;
  * @author MLJ
  */
 public class Emark4JView {
-
-    private static final Font[] FONTS;
-
-    static {
-        FONTS = new Font[]{
-                new Font("微软雅黑", Font.PLAIN, 16),
-                new Font("微软雅黑", Font.BOLD, 24),
-                new Font("微软雅黑", Font.BOLD, 20),
-                new Font("微软雅黑", Font.BOLD, 18),
-                new Font("微软雅黑", Font.BOLD, 16),
-                new Font("微软雅黑", Font.BOLD, 14),
-                new Font("微软雅黑", Font.BOLD, 12)
-        };
-    }
-
     private final JFrame frame;    //主窗口
     private final JTextPane textPane;
-    private final DocumentManager documentManager;
 
-    public Emark4JView(DocumentManager documentManager) {
+    public Emark4JView() {
         this.frame = new JFrame();
         this.textPane = new JTextPane();
-        this.documentManager = new DocumentManager();
-        this.textPane.setStyledDocument(documentManager.getMarkDocument());
+        this.textPane.setDoubleBuffered(true);
     }
 
     public void show() {

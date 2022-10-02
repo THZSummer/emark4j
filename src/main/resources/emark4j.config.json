@@ -10,48 +10,67 @@
     "key": {
       "type": "string",
       "enum": [
-        "Ctrl",
-        "Shift",
-        "Alt",
-        "0",
+        "ctrl",
+        "shift",
+        "alt",
+        "`",
         "1",
         "2",
         "3",
         "4",
         "5",
         "6",
-        "A",
-        "B",
-        "C",
-        "D",
+        "7",
+        "8",
+        "9",
+        "0",
+        "-",
+        "=",
+        "Q",
+        "W",
         "E",
+        "R",
+        "T",
+        "Y",
+        "U",
+        "I",
+        "O",
+        "P",
+        "[",
+        "]",
+        "\\",
+        "A",
+        "S",
+        "D",
         "F",
         "G",
         "H",
-        "I",
         "J",
         "K",
         "L",
-        "M",
-        "N",
-        "O",
-        "P",
-        "Q",
-        "R",
-        "S",
-        "T",
-        "U",
-        "V",
-        "W",
+        ";",
+        "'",
+        "Z",
         "X",
-        "Y",
-        "Z"
+        "C",
+        "V",
+        "B",
+        "N",
+        "M",
+        ",",
+        ".",
+        "/"
       ]
     },
     "keymap": {
-      "type": "array",
-      "items": {
-        "$ref": "#/definitions/key"
+      "type": "object",
+      "properties": {
+        "keys": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/key"
+          }
+        }
       }
     },
     "keymaps": {
@@ -108,18 +127,16 @@
     "color": {
       "type": "object",
       "properties": {
-        "foreColor": {
-          "type": "string",
-          "default": "#00000000",
-          "pattern": "^#([a-fA-F0-9]{8}|([a-fA-F0-9]{6}|[a-fA-F0-9]{3}))$"
-        },
-        "backColor": {
-          "type": "string",
-          "default": "#FFFFFFFF",
-          "pattern": "^#([a-fA-F0-9]{8}|([a-fA-F0-9]{6}|[a-fA-F0-9]{3}))$"
+        "rgba": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 255,
+            "minLength": 3,
+            "maxLength": 4
+          }
         }
-      },
-      "default": {
       }
     },
     "scope": {
@@ -147,19 +164,21 @@
         "id": {
           "type": "string",
           "default": "style_0",
-          "pattern": "style_[0-9a-zA-Z]+|header_[0-6]|action_file_[0-9a-zA-Z]+"
+          "pattern": "style_[0-9a-zA-Z]+|header_[0-6]|action_file_[0-9a-zA-Z]+|action_edit_[0-9a-zA-Z_]+"
         },
         "name": {
           "type": "string",
           "default": "Style0",
-          "pattern": "Style[0-9a-zA-Z]+|Header[0-6]|ActionFile[0-9A-Z][0-9a-zA-Z]+"
+          "pattern": "Style[0-9a-zA-Z]+|Header[0-6]|ActionFile[0-9A-Z][0-9a-zA-Z]+|ActionEdit[0-9A-Z][0-9a-zA-Z]+"
         },
         "pattern": {
           "type": "string",
           "enum": [
             "^style_[0-9a-zA-Z]+$",
             "^header_[0-6]$",
-            "^action_file_[0-9a-zA-Z]+$"
+            "^action_file_open+$",
+            "^action_file_save+$",
+            "^action_edit_mode_toggle+$"
           ]
         },
         "regex": {
@@ -179,9 +198,11 @@
           "$ref": "#/definitions/font",
           "default": {}
         },
-        "color": {
-          "$ref": "#/definitions/color",
-          "default": {}
+        "foreColor": {
+          "$ref": "#/definitions/color"
+        },
+        "backColor": {
+          "$ref": "#/definitions/color"
         }
       },
       "default": {

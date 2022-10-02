@@ -1,4 +1,4 @@
-package com.mlj.emark4j.bean.annotation;
+package com.mlj.emark4j.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -10,8 +10,10 @@ import java.lang.annotation.Target;
  *
  * @author MLJ
  */
-@Target(ElementType.TYPE)
+@Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ModulePackage {
-    String[] packages() default {};
+public @interface ModuleBuilder {
+    String pattern() default "";
+
+    Class<?> clazz() default void.class;
 }

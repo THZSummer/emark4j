@@ -29,18 +29,32 @@
       "regex": "^.*$",
       "level": 0,
       "keymaps": [
-        [
-          "Ctrl",
-          "0"
-        ]
+        {
+          "keys": [
+            "ctrl",
+            "0"
+          ]
+        }
       ],
       "font": {
         "fontSize": 16,
         "fontFamily": "微软雅黑"
       },
-      "color": {
-        "foreColor": "#00000000",
-        "backColor": "#FFFFFFFF"
+      "foreColor": {
+        "rgba": [
+          0,
+          0,
+          0,
+          255
+        ]
+      },
+      "backColor": {
+        "rgba": [
+          255,
+          255,
+          255,
+          255
+        ]
       }
     },
     {
@@ -50,10 +64,12 @@
       "regex": "^#.*$",
       "level": 1,
       "keymaps": [
-        [
-          "Ctrl",
-          "1"
-        ]
+        {
+          "keys": [
+            "ctrl",
+            "1"
+          ]
+        }
       ],
       "font": {
         "fontSize": 24
@@ -66,10 +82,12 @@
       "regex": "^##.*$",
       "level": 2,
       "keymaps": [
-        [
-          "Ctrl",
-          "2"
-        ]
+        {
+          "keys": [
+            "ctrl",
+            "2"
+          ]
+        }
       ],
       "font": {
         "fontSize": 20
@@ -82,10 +100,12 @@
       "regex": "^###.*$",
       "level": 3,
       "keymaps": [
-        [
-          "Ctrl",
-          "3"
-        ]
+        {
+          "keys": [
+            "ctrl",
+            "3"
+          ]
+        }
       ],
       "font": {
         "fontSize": 18
@@ -98,10 +118,12 @@
       "regex": "^####.*$",
       "level": 4,
       "keymaps": [
-        [
-          "Ctrl",
-          "4"
-        ]
+        {
+          "keys": [
+            "ctrl",
+            "4"
+          ]
+        }
       ],
       "font": {
         "fontSize": 16
@@ -114,10 +136,12 @@
       "regex": "^#####.*$",
       "level": 5,
       "keymaps": [
-        [
-          "Ctrl",
-          "5"
-        ]
+        {
+          "keys": [
+            "ctrl",
+            "5"
+          ]
+        }
       ],
       "font": {
         "fontSize": 14
@@ -130,10 +154,12 @@
       "regex": "^######.*$",
       "level": 6,
       "keymaps": [
-        [
-          "Ctrl",
-          "6"
-        ]
+        {
+          "keys": [
+            "ctrl",
+            "6"
+          ]
+        }
       ],
       "font": {
         "fontSize": 12
@@ -142,23 +168,40 @@
     {
       "id": "action_file_open",
       "name": "ActionFileOpen",
-      "pattern": "^action_file_[0-9a-zA-Z]+$",
+      "pattern": "^action_file_open+$",
       "keymaps": [
-        [
-          "Ctrl",
-          "O"
-        ]
+        {
+          "keys": [
+            "ctrl",
+            "O"
+          ]
+        }
       ]
     },
     {
       "id": "action_file_save",
       "name": "ActionFileSave",
-      "pattern": "^action_file_[0-9a-zA-Z]+$",
+      "pattern": "^action_file_save+$",
       "keymaps": [
-        [
-          "Ctrl",
-          "S"
-        ]
+        {
+          "keys": [
+            "ctrl",
+            "S"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "action_edit_mode_toggle",
+      "name": "ActionEditModeToggle",
+      "pattern": "^action_edit_mode_toggle+$",
+      "keymaps": [
+        {
+          "keys": [
+            "ctrl",
+            "\\"
+          ]
+        }
       ]
     }
   ]
