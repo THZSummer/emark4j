@@ -11,6 +11,7 @@ import com.mlj.emark4j.module.action.HeaderAction;
 
 import javax.swing.*;
 import javax.swing.text.DefaultStyledDocument;
+import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import java.awt.*;
@@ -34,9 +35,24 @@ public class HeaderBuilder {
         if (null != font) {
             StyleConstants.ParagraphConstants.setFontFamily(header, font.getFontFamily());
             StyleConstants.ParagraphConstants.setFontSize(header, font.getFontSize());
-        }
-        if (Constants.DEFAULT_STYLE_NAME.equals(name)) {
-            StyleConstants.FontConstants.setBold(header, true);
+            if (!Constants.DEFAULT_STYLE_NAME.equals(name)) {
+                StyleConstants.FontConstants.setBold(header, true);
+                SimpleAttributeSet header0 = new SimpleAttributeSet();
+                header0.addAttribute(StyleConstants.ParagraphConstants.SpaceAbove, font.getFontSize() / 2f);
+                header0.addAttribute(StyleConstants.ParagraphConstants.SpaceBelow, font.getFontSize() / 2f);
+                header0.addAttribute(StyleConstants.ParagraphConstants.LeftIndent, 0f);
+                header0.addAttribute(StyleConstants.ParagraphConstants.RightIndent, 0f);
+                header0.addAttribute(StyleConstants.ParagraphConstants.FirstLineIndent, 0f);
+                header.addAttributes(header0);
+            } else {
+                SimpleAttributeSet header0 = new SimpleAttributeSet();
+                header0.addAttribute(StyleConstants.ParagraphConstants.SpaceAbove, 2f);
+                header0.addAttribute(StyleConstants.ParagraphConstants.SpaceBelow, 2f);
+                header0.addAttribute(StyleConstants.ParagraphConstants.LeftIndent, 2f);
+                header0.addAttribute(StyleConstants.ParagraphConstants.RightIndent, 2f);
+                header0.addAttribute(StyleConstants.ParagraphConstants.FirstLineIndent, font.getFontSize() * 2.0f);
+                header.addAttributes(header0);
+            }
         }
         JSONObject foreColor = jsonObject.getJSONObject("foreColor");
         JSONObject backColor = jsonObject.getJSONObject("backColor");
@@ -48,12 +64,13 @@ public class HeaderBuilder {
             StyleConstants.ColorConstants.setBackground(header, ActionFactory.build(backColor, Color.class, "^color$"));
         }
 
+        ActionFactory.getInstance().getStyleMap().put(name, header);
+
         JSONArray keymaps = jsonObject.getJSONArray("keymaps");
 
         KeyStroke keyStroke = ActionFactory.build(keymaps.getJSONObject(0), KeyStroke.class, "^keymap$");
 
-        JTextPane textPane = ActionFactory.getInstance().getView().getTextPane();
-        ActionManager.ActionMapper actionMapper = new ActionManager.ActionMapper(new HeaderAction(name, textPane, styledDocument), keyStroke);
+        ActionManager.ActionMapper actionMapper = new ActionManager.ActionMapper(name, new HeaderAction(name), keyStroke);
 
         ActionFactory.getInstance().addActionMapper(actionMapper);
     }

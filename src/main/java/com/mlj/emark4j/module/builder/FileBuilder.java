@@ -19,22 +19,24 @@ public class FileBuilder {
 
     @ModuleBuilder(pattern = "^action_file_open+$")
     public void buildOpenFile(JSONObject jsonObject) throws UnsupportedOperationException {
+        String name = jsonObject.getString("name");
         JSONArray keymaps = jsonObject.getJSONArray("keymaps");
 
         KeyStroke keyStroke = ActionFactory.build(keymaps.getJSONObject(0), KeyStroke.class, "^keymap$");
 
-        ActionManager.ActionMapper actionMapper = new ActionManager.ActionMapper(new OpenFileAction(), keyStroke);
+        ActionManager.ActionMapper actionMapper = new ActionManager.ActionMapper(name, new OpenFileAction(), keyStroke);
 
         ActionFactory.getInstance().addActionMapper(actionMapper);
     }
 
     @ModuleBuilder(pattern = "^action_file_save+$")
     public void buildSaveFile(JSONObject jsonObject) throws UnsupportedOperationException {
+        String name = jsonObject.getString("name");
         JSONArray keymaps = jsonObject.getJSONArray("keymaps");
 
         KeyStroke keyStroke = ActionFactory.build(keymaps.getJSONObject(0), KeyStroke.class, "^keymap$");
 
-        ActionManager.ActionMapper actionMapper = new ActionManager.ActionMapper(new SaveFileAction(), keyStroke);
+        ActionManager.ActionMapper actionMapper = new ActionManager.ActionMapper(name, new SaveFileAction(), keyStroke);
 
         ActionFactory.getInstance().addActionMapper(actionMapper);
     }
