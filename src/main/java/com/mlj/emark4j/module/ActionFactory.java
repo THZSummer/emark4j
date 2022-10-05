@@ -7,16 +7,18 @@ import com.mlj.emark4j.annotation.ModulePackage;
 import com.mlj.emark4j.bean.Constants;
 import com.mlj.emark4j.bean.Emark4JConfig;
 import com.mlj.emark4j.module.builder.HeaderBuilder;
+import com.mlj.emark4j.module.listener.SyncDocumentListeners;
+import com.mlj.emark4j.module.listener.TabbedSwitchListeners;
 import com.mlj.emark4j.view.Emark4JView;
 
 import javax.swing.*;
 import javax.swing.text.DefaultStyledDocument;
-import java.awt.*;
+import javax.swing.text.Style;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.URI;
 import java.net.URL;
-import java.util.List;
 import java.util.*;
 
 /**
@@ -37,6 +39,8 @@ public class ActionFactory {
     private Map<String, Method> builderMethodMap;
 
     private ActionManager actionManager;
+
+    private Map<String, Style> styleMap;
 
     private static volatile ActionFactory defaultFactory;
 
@@ -66,7 +70,7 @@ public class ActionFactory {
         this.builderMap = new HashMap<>();
         this.builderMethodMap = new HashMap<>();
         this.actionManager = new ActionManager();
-        this.view.getTextPane().setStyledDocument(this.documentManager.getMarkDocument());
+        this.styleMap = new HashMap<>();
 
         ModulePackage declaredAnnotation = defaultFactory.getClass().getDeclaredAnnotation(ModulePackage.class);
         String[] packages = declaredAnnotation.packages();
@@ -124,7 +128,7 @@ public class ActionFactory {
         ActionFactory actionFactory = getInstance();
         Method method = actionFactory.builderMethodMap.get(pattern);
         try {
-            java.lang.Object obj = method.invoke(new HeaderBuilder(), jsonObject);
+            Object obj = method.invoke(new HeaderBuilder(), jsonObject);
             if (obj.getClass() == tClass) {
                 return (T) obj;
             }
@@ -135,16 +139,99 @@ public class ActionFactory {
     }
 
     public void registerAction() {
+        registerTextPaneAction();
+
+        registerSyncDocumentListener();
+
+        registerHeaderAction();
+
+        registerFileAction();
+
+        registerModeToggleAction();
+
+        registerTabbedSwitchListener();
+    }
+
+    public void openNewTab(URI uri) {
+        DocumentManager.createNewDocumentManager(uri);
+        view.createNewTabbed(new File(uri).getName());
+        view.getTabbedPane().setSelectedIndex(view.getTabbedPane().getTabCount() - 1);
+        registerTextPaneAction();
+        registerSyncDocumentListener();
+    }
+
+    public void closeTab(String name) {
+
+    }
+
+    public void renameTabTo(String newName) {
+        documentManager.renameDocumentTo(newName);
+        view.renameTabbed(newName);
+    }
+
+    // tab
+    private void registerTextPaneAction() {
         JTextPane textPane = this.view.getTextPane();
         DefaultStyledDocument styledDocument = documentManager.getMarkDocument();
-        Font font = styledDocument.getFont(styledDocument.getStyle(Constants.DEFAULT_STYLE_NAME));
-        textPane.setFont(font);
+        textPane.setStyledDocument(styledDocument);
+        Style defaultStyle = styleMap.get(Constants.DEFAULT_STYLE_NAME);
+        textPane.setFont(styledDocument.getFont(defaultStyle));
+        textPane.setBackground(styledDocument.getBackground(defaultStyle));
+        textPane.setForeground(styledDocument.getForeground(defaultStyle));
+        textPane.setDisabledTextColor(styledDocument.getForeground(defaultStyle));
+
         actionManager.getMappers().forEach(actionMapper ->
                 textPane.registerKeyboardAction(actionMapper.anAction, actionMapper.aKeyStroke, actionMapper.aCondition));
+
+
+    }
+
+    // tab
+    private void registerSyncDocumentListener() {
+        documentManager.getMarkDocument().addDocumentListener(new SyncDocumentListeners.EmarkDocumentListener());
+
+        documentManager.getSourceDocument().addDocumentListener(new SyncDocumentListeners.SourceDocumentListener());
+    }
+
+    private void registerTabbedSwitchListener() {
+        this.view.getTabbedPane().addChangeListener(new TabbedSwitchListeners());
+    }
+
+    private void registerFileAction() {
+        view.getOpenFileButton().addActionListener(actionManager.getMapperMap().get(view.getOpenFileButton().getText()).anAction);
+        view.getSaveFileButton().addActionListener(actionManager.getMapperMap().get(view.getSaveFileButton().getText()).anAction);
+    }
+
+    private void registerHeaderAction() {
+        for (JButton headerButton : view.getHeaderButtons()) {
+            headerButton.addActionListener(actionManager.getMapperMap().get(headerButton.getText()).anAction);
+        }
+    }
+
+    private void registerModeToggleAction() {
+        view.getDocModeToggleButton().addActionListener(actionManager.getMapperMap().get("ActionDocModeToggle").anAction);
+        view.getReadonlyModeToggleButton().addActionListener(actionManager.getMapperMap().get("ActionReadonlyModeToggle").anAction);
+    }
+
+    public static boolean isRead() {
+        return getInstance().documentManager.getEditMode().isRead();
+    }
+
+    public static boolean isWrite() {
+        return getInstance().documentManager.getEditMode().isWrite();
+    }
+
+    public static boolean isSource() {
+        return getInstance().documentManager.getEditMode().isSource();
+    }
+
+    public static boolean isEmark() {
+        return getInstance().documentManager.getEditMode().isEmark();
     }
 
     public void addActionMapper(ActionManager.ActionMapper actionMapper) {
         this.actionManager.mappers.add(actionMapper);
+        this.actionManager.mapperMap.put(actionMapper.name, actionMapper);
     }
 
     public Emark4JConfig getConfig() {
@@ -165,6 +252,10 @@ public class ActionFactory {
 
     public ActionManager getActionManager() {
         return actionManager;
+    }
+
+    public Map<String, Style> getStyleMap() {
+        return styleMap;
     }
 
     private ActionFactory() {

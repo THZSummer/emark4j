@@ -1,10 +1,13 @@
 package com.mlj.emark4j.module;
 
+import com.mlj.emark4j.bean.Constants;
 import com.mlj.emark4j.bean.EditMode;
 
 import javax.swing.text.DefaultStyledDocument;
-import javax.swing.text.PlainDocument;
+import java.io.File;
 import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 2022/09/12：
@@ -12,56 +15,70 @@ import java.net.URI;
  * @author MLJ
  */
 public class DocumentManager {
-    private DefaultStyledDocument markDocument;
-    private PlainDocument sourceDocument;
-    private StringBuffer documentBuffer;
+    private final String name;
+    private final DefaultStyledDocument markDocument;
+    private final DefaultStyledDocument sourceDocument;
+    private final StringBuffer documentBuffer;
     private URI documentURI;
     private EditMode editMode;
 
-    public DocumentManager() {
+    private static final Map<String, DocumentManager> documentManagerMap = new HashMap<>();
+
+    private DocumentManager(URI uri) {
+        this.name = new File(uri.getPath()).getName();
         this.markDocument = new DefaultStyledDocument();
-        this.sourceDocument = new PlainDocument();
+        this.sourceDocument = new DefaultStyledDocument();
         this.documentBuffer = new StringBuffer();
-        this.editMode = EditMode.WRITE_EMARK;
+        this.documentURI = uri;
+        this.editMode = Constants.DEFAULT_DOC_MODE;
+
+        documentManagerMap.put(name, this);
+    }
+
+    public static DocumentManager createNewDocumentManager(URI uri) {
+        return new DocumentManager(uri);
+    }
+
+    public void renameDocumentTo(String newName) {
+        String old = this.getName();
+        documentManagerMap.put(newName, documentManagerMap.get(old));
+        documentManagerMap.remove(old);
+    }
+
+    private DocumentManager getTabDocumentManager() {
+        return documentManagerMap.get(ActionFactory.getInstance().getView().getTabTitle());
+    }
+
+    public String getName() {
+        return getTabDocumentManager().name;
     }
 
     public DefaultStyledDocument getMarkDocument() {
-        return markDocument;
+        return getTabDocumentManager().markDocument;
     }
 
-    public void setMarkDocument(DefaultStyledDocument markDocument) {
-        this.markDocument = markDocument;
-    }
-
-    public PlainDocument getSourceDocument() {
-        return sourceDocument;
-    }
-
-    public void setSourceDocument(PlainDocument sourceDocument) {
-        this.sourceDocument = sourceDocument;
+    public DefaultStyledDocument getSourceDocument() {
+        return getTabDocumentManager().sourceDocument;
     }
 
     public StringBuffer getDocumentBuffer() {
-        return documentBuffer;
+        return getTabDocumentManager().documentBuffer;
     }
 
-    public void setDocumentBuffer(StringBuffer documentBuffer) {
-        this.documentBuffer = documentBuffer;
-    }
 
     public URI getDocumentURI() {
-        return documentURI;
+        return getTabDocumentManager().documentURI;
     }
 
     public void setDocumentURI(URI documentURI) {
-        this.documentURI = documentURI;
+        getTabDocumentManager().documentURI = documentURI;
     }
 
     public EditMode getEditMode() {
-        return editMode;
+        return getTabDocumentManager().editMode;
     }
 
     public void setEditMode(EditMode editMode) {
-        this.editMode = editMode;
+        getTabDocumentManager().editMode = editMode;
     }
 }

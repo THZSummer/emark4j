@@ -192,9 +192,22 @@
       ]
     },
     {
-      "id": "action_edit_mode_toggle",
-      "name": "ActionEditModeToggle",
-      "pattern": "^action_edit_mode_toggle+$",
+      "id": "action_doc_mode_toggle",
+      "name": "ActionDocModeToggle",
+      "pattern": "^action_doc_mode_toggle+$",
+      "keymaps": [
+        {
+          "keys": [
+            "ctrl",
+            "\/"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "action_readonly_mode_toggle",
+      "name": "ActionReadonlyModeToggle",
+      "pattern": "^action_readonly_mode_toggle+$",
       "keymaps": [
         {
           "keys": [

@@ -5,11 +5,14 @@ import com.mlj.emark4j.module.ActionFactory;
 import com.mlj.emark4j.module.DocumentManager;
 import com.mlj.emark4j.view.Emark4JView;
 
+import javax.swing.filechooser.FileSystemView;
+import java.io.File;
 import java.io.InputStream;
+import java.net.URI;
 import java.util.List;
 
 /**
- * 2022/08/20：
+ * 2022/08/20：行为驱动式文档编辑，
  *
  * @author MLJ
  */
@@ -21,9 +24,11 @@ public class Emark4J {
         // 2.读取配置文件
         Emark4JConfig emark4JConfig = new Emark4JConfig(CONFIG);
 
-        DocumentManager documentManager = new DocumentManager();
         // 4.初始化界面
         Emark4JView emark4JView = new Emark4JView();
+
+        URI uri = new File(FileSystemView.getFileSystemView().getHomeDirectory(), emark4JView.getTabTitle()).toURI();
+        DocumentManager documentManager = DocumentManager.createNewDocumentManager(uri);
         // 3.初始化配置
         ActionFactory actionFactory = ActionFactory.getInstance();
         try {
