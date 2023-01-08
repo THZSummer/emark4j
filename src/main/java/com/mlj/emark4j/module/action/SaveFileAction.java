@@ -66,7 +66,7 @@ public class SaveFileAction implements ActionListener {
                 return "emark file";
             }
         });
-        jFileChooser.showOpenDialog(ActionFactory.getInstance().getView().getFrame());
+        jFileChooser.showSaveDialog(ActionFactory.getInstance().getView().getFrame());
 
         File selectedFile = jFileChooser.getSelectedFile();
 

@@ -6,14 +6,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 2022/09/10：
+ * 2023/01/08：
  *
  * @author MLJ
  */
-@Target({ElementType.METHOD, ElementType.TYPE})
+@Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ModuleBuilder {
-    String pattern() default "";
-
-    Class<?> clazz() default void.class;
+public @interface EActionRegister {
+    String path() default "";
 }

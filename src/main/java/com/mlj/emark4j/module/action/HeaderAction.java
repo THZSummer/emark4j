@@ -3,6 +3,7 @@ package com.mlj.emark4j.module.action;
 import com.mlj.emark4j.bean.Constants;
 import com.mlj.emark4j.bean.StyleScope;
 import com.mlj.emark4j.module.ActionFactory;
+import com.mlj.emark4j.module.StyleManager;
 import com.mlj.emark4j.util.DocumentUtil;
 
 import javax.swing.*;
@@ -11,6 +12,7 @@ import javax.swing.text.DefaultStyledDocument;
 import javax.swing.text.Style;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -40,10 +42,11 @@ public class HeaderAction implements ActionListener {
     private void emarkModeAction(ActionEvent e) {
         JTextPane textPane = ActionFactory.getInstance().getView().getTextPane();
         DefaultStyledDocument markDocument = ActionFactory.getInstance().getDocumentManager().getMarkDocument();
-        Style style = ActionFactory.getInstance().getStyleMap().get(Constants.DEFAULT_STYLE_NAME);
+        Map<String, StyleManager.StyleMapper> styleMapperMap = ActionFactory.getInstance().getStyleManager().getMapperMap();
+        Style style = styleMapperMap.get(Constants.DEFAULT_STYLE_NAME).getStyle();
 
         boolean containsAttributes = textPane.getParagraphAttributes().containsAttributes(style);
-        style = containsAttributes ? ActionFactory.getInstance().getStyleMap().get(name) : style;
+        style = containsAttributes ? styleMapperMap.get(name).getStyle() : style;
         switch (styleScope) {
             case PARAGRAPH:
                 markDocument.setParagraphAttributes(DocumentUtil.getParagraphStart(), DocumentUtil.getParagraphEnd() - DocumentUtil.getParagraphStart(), style, true);
@@ -64,12 +67,11 @@ public class HeaderAction implements ActionListener {
         int selectionStart = DocumentUtil.getSelectionStart();
         int selectionEnd = DocumentUtil.getSelectionEnd();
         DefaultStyledDocument sourceDocument = ActionFactory.getInstance().getDocumentManager().getSourceDocument();
+        StyleManager.StyleMapper styleMapper = ActionFactory.getInstance().getStyleManager().getMapperMap().get(this.name);
         try {
             String text = textPane.getText(paragraphStart, paragraphEnd - paragraphStart);
-            if (Objects.isNull(text)) {
-
-            } else {
-                String[] split = text.split("^#* *");
+            if (!Objects.isNull(text)) {
+                String[] split = text.split(styleMapper.getPattern());
                 if (split.length == 2) {
                     sourceDocument.remove(paragraphStart, text.length() - split[1].length());
                 } else {

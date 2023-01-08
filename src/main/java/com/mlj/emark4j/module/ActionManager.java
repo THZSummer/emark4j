@@ -2,9 +2,7 @@ package com.mlj.emark4j.module;
 
 import javax.swing.*;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -13,47 +11,59 @@ import java.util.Map;
  * @author MLJ
  */
 public class ActionManager {
-
-    List<ActionMapper> mappers;
-
-    Map<String, ActionMapper> mapperMap;
+    private final Map<String, ActionListener> actionListenerMap;
+    private final Map<String, Builder<?>> builderMap;
+    private final Map<String, ActionMapper> mapperMap;
 
     public ActionManager() {
-        this.mappers = new ArrayList<>();
         this.mapperMap = new HashMap<>();
+        this.actionListenerMap = new HashMap<>();
+        this.builderMap = new HashMap<>();
     }
 
-    public List<ActionMapper> getMappers() {
-        return mappers;
+    public Map<String, Builder<?>> getBuilderMap() {
+        return builderMap;
     }
 
-    public void setMappers(List<ActionMapper> mappers) {
-        this.mappers = mappers;
+    public Map<String, ActionListener> getActionListenerMap() {
+        return actionListenerMap;
     }
 
     public Map<String, ActionMapper> getMapperMap() {
         return mapperMap;
     }
 
-    public void setMapperMap(Map<String, ActionMapper> mapperMap) {
-        this.mapperMap = mapperMap;
-    }
-
     public static class ActionMapper {
-        String name;
-        ActionListener anAction;
-        KeyStroke aKeyStroke;
-        int aCondition;
+        private final String name;
+        private final ActionListener action;
+        private final KeyStroke aKeyStroke;
+        private final int aCondition;
 
         public ActionMapper(String name, ActionListener action, KeyStroke keyStroke, int whenFocused) {
             this.name = name;
-            this.anAction = action;
+            this.action = action;
             this.aKeyStroke = keyStroke;
             this.aCondition = whenFocused;
         }
 
         public ActionMapper(String name, ActionListener anAction, KeyStroke aKeyStroke) {
             this(name, anAction, aKeyStroke, JComponent.WHEN_FOCUSED);
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public ActionListener getAction() {
+            return action;
+        }
+
+        public KeyStroke getaKeyStroke() {
+            return aKeyStroke;
+        }
+
+        public int getaCondition() {
+            return aCondition;
         }
     }
 }

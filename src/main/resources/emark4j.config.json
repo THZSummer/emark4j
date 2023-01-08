@@ -164,12 +164,12 @@
         "id": {
           "type": "string",
           "default": "style_0",
-          "pattern": "style_[0-9a-zA-Z]+|header_[0-6]|action_file_[0-9a-zA-Z]+|action_edit_[0-9a-zA-Z_]+"
+          "pattern": "style_[0-9a-zA-Z]+|\/header\/header[0-6]|\/file\/(open|save)|\/editor\/mode\/(doc|edit)"
         },
         "name": {
           "type": "string",
           "default": "Style0",
-          "pattern": "Style[0-9a-zA-Z]+|Header[0-6]|ActionFile[0-9A-Z][0-9a-zA-Z]+|ActionEdit[0-9A-Z][0-9a-zA-Z]+"
+          "pattern": "Style[0-9a-zA-Z]+|Header[0-6]|ActionFile(Open|Save)|Action(Doc|Readonly)ModeToggle"
         },
         "pattern": {
           "type": "string",
@@ -178,7 +178,9 @@
             "^header_[0-6]$",
             "^action_file_open+$",
             "^action_file_save+$",
-            "^action_edit_mode_toggle+$"
+            "^action_edit_mode_toggle+$",
+            "^action_doc_mode_toggle+$",
+            "^action_readonly_mode_toggle+$"
           ]
         },
         "regex": {

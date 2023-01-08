@@ -23,10 +23,10 @@
   ],
   "styles": [
     {
-      "id": "header_0",
+      "id": "/header/header0",
       "name": "Header0",
       "pattern": "^header_[0-6]$",
-      "regex": "^.*$",
+      "regex": "^ *",
       "level": 0,
       "keymaps": [
         {
@@ -58,10 +58,10 @@
       }
     },
     {
-      "id": "header_1",
+      "id": "/header/header1",
       "name": "Header1",
       "pattern": "^header_[0-6]$",
-      "regex": "^#.*$",
+      "regex": "^#{1}? *",
       "level": 1,
       "keymaps": [
         {
@@ -76,10 +76,10 @@
       }
     },
     {
-      "id": "header_2",
+      "id": "/header/header2",
       "name": "Header2",
       "pattern": "^header_[0-6]$",
-      "regex": "^##.*$",
+      "regex": "^#{2}? *",
       "level": 2,
       "keymaps": [
         {
@@ -94,10 +94,10 @@
       }
     },
     {
-      "id": "header_3",
+      "id": "/header/header3",
       "name": "Header3",
       "pattern": "^header_[0-6]$",
-      "regex": "^###.*$",
+      "regex": "^#{3}? *",
       "level": 3,
       "keymaps": [
         {
@@ -112,10 +112,10 @@
       }
     },
     {
-      "id": "header_4",
+      "id": "/header/header4",
       "name": "Header4",
       "pattern": "^header_[0-6]$",
-      "regex": "^####.*$",
+      "regex": "^#{4}? *",
       "level": 4,
       "keymaps": [
         {
@@ -130,10 +130,10 @@
       }
     },
     {
-      "id": "header_5",
+      "id": "/header/header5",
       "name": "Header5",
       "pattern": "^header_[0-6]$",
-      "regex": "^#####.*$",
+      "regex": "^#{5}? *",
       "level": 5,
       "keymaps": [
         {
@@ -148,10 +148,10 @@
       }
     },
     {
-      "id": "header_6",
+      "id": "/header/header6",
       "name": "Header6",
       "pattern": "^header_[0-6]$",
-      "regex": "^######.*$",
+      "regex": "^#{6}? *",
       "level": 6,
       "keymaps": [
         {
@@ -166,7 +166,7 @@
       }
     },
     {
-      "id": "action_file_open",
+      "id": "/file/open",
       "name": "ActionFileOpen",
       "pattern": "^action_file_open+$",
       "keymaps": [
@@ -179,7 +179,7 @@
       ]
     },
     {
-      "id": "action_file_save",
+      "id": "/file/save",
       "name": "ActionFileSave",
       "pattern": "^action_file_save+$",
       "keymaps": [
@@ -192,7 +192,7 @@
       ]
     },
     {
-      "id": "action_doc_mode_toggle",
+      "id": "/editor/mode/doc",
       "name": "ActionDocModeToggle",
       "pattern": "^action_doc_mode_toggle+$",
       "keymaps": [
@@ -205,7 +205,7 @@
       ]
     },
     {
-      "id": "action_readonly_mode_toggle",
+      "id": "/editor/mode/edit",
       "name": "ActionReadonlyModeToggle",
       "pattern": "^action_readonly_mode_toggle+$",
       "keymaps": [

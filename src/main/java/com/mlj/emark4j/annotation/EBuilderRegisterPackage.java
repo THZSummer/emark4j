@@ -6,12 +6,13 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 2022/09/10：
+ * 2023/01/08：
  *
  * @author MLJ
  */
+
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ModulePackage {
+public @interface EBuilderRegisterPackage {
     String[] packages() default {};
 }

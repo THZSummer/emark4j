@@ -17,7 +17,7 @@ public class Emark4JView {
 
     private final Map<String, JTextPane> textPaneMap;
     private final Map<String, JScrollPane> textScrollPaneMap;
-    private final JTabbedPane tabbedPane;
+    private final ETabbedPane tabbedPane;
 
     private final JTree leftTree;
     private final JToolBar rightToolBar;
@@ -35,7 +35,7 @@ public class Emark4JView {
 
         this.textPaneMap = new HashMap<>();
         this.textScrollPaneMap = new HashMap<>();
-        this.tabbedPane = new JTabbedPane();
+        this.tabbedPane = new ETabbedPane();
 
         this.leftTree = new JTree();
         this.rightToolBar = new JToolBar();
@@ -79,10 +79,8 @@ public class Emark4JView {
     }
 
     public void createNewTabbed(String tabbedName) {
-        JTextPane jTextPane = new JTextPane();
-        JScrollPane jScrollPane = new JScrollPane();
-        initTextPane(jTextPane);
-        initTextScrollPane(jScrollPane, jTextPane);
+        ETextPane jTextPane = new ETextPane();
+        EScrollPane jScrollPane = new EScrollPane(jTextPane);
 
         this.textPaneMap.put(tabbedName, jTextPane);
         this.textScrollPaneMap.put(tabbedName, jScrollPane);
@@ -117,18 +115,6 @@ public class Emark4JView {
     private void initBottomToolBar() {
         this.bottomToolBar.add(this.docModeToggleButton);
         this.bottomToolBar.add(this.readonlyModeToggleButton);
-    }
-
-    private void initTextScrollPane(JScrollPane textScrollPane, JTextPane textPane) {
-        textScrollPane.setViewportView(textPane);
-        textScrollPane.setBounds(textPane.getBounds());
-        textScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        textScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-    }
-
-    private void initTextPane(JTextPane textPane) {
-        textPane.setAutoscrolls(true);
-        textPane.setAutoscrolls(true);
     }
 
     private void initFrame() {

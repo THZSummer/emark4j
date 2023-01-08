@@ -9,7 +9,6 @@ import javax.swing.filechooser.FileSystemView;
 import java.io.File;
 import java.io.InputStream;
 import java.net.URI;
-import java.util.List;
 
 /**
  * 2022/08/20：行为驱动式文档编辑，
@@ -38,7 +37,7 @@ public class Emark4J {
         }
 
         // 3.1.构建事件
-        List<Object> builder = actionFactory.builder();
+        actionFactory.builder();
 
         // 显示窗口
         emark4JView.show();

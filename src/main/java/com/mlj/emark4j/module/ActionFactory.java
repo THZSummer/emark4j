@@ -2,11 +2,12 @@ package com.mlj.emark4j.module;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.mlj.emark4j.annotation.ModuleBuilder;
-import com.mlj.emark4j.annotation.ModulePackage;
+import com.mlj.emark4j.annotation.EActionRegister;
+import com.mlj.emark4j.annotation.EActionRegisterPackage;
+import com.mlj.emark4j.annotation.EBuilderRegister;
+import com.mlj.emark4j.annotation.EBuilderRegisterPackage;
 import com.mlj.emark4j.bean.Constants;
 import com.mlj.emark4j.bean.Emark4JConfig;
-import com.mlj.emark4j.module.builder.HeaderBuilder;
 import com.mlj.emark4j.module.listener.SyncDocumentListeners;
 import com.mlj.emark4j.module.listener.TabbedSwitchListeners;
 import com.mlj.emark4j.view.Emark4JView;
@@ -14,49 +15,47 @@ import com.mlj.emark4j.view.Emark4JView;
 import javax.swing.*;
 import javax.swing.text.DefaultStyledDocument;
 import javax.swing.text.Style;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URL;
-import java.util.*;
+import java.util.Objects;
 
 /**
  * 2022/09/07：
  *
  * @author MLJ
  */
-@ModulePackage(packages = {"com.mlj.emark4j.module.builder"})
+
+@EActionRegisterPackage(packages = {"com.mlj.emark4j.module.action.register"})
+@EBuilderRegisterPackage(packages = {"com.mlj.emark4j.module.builder.register"})
 public class ActionFactory {
-    private Emark4JConfig config;
+    private static Emark4JConfig config;
 
-    private Emark4JView view;
+    private static Emark4JView view;
 
-    private DocumentManager documentManager;
+    private static DocumentManager documentManager;
 
-    private Map<String, Object> builderMap;
+    private static final ActionManager actionManager;
 
-    private Map<String, Method> builderMethodMap;
+    private static final StyleManager styleManager;
 
-    private ActionManager actionManager;
+    private static final ActionFactory defaultFactory;
 
-    private Map<String, Style> styleMap;
-
-    private static volatile ActionFactory defaultFactory;
+    static {
+        actionManager = new ActionManager();
+        styleManager = new StyleManager();
+        defaultFactory = new ActionFactory();
+    }
 
     public static ActionFactory getInstance() {
-        if (null == defaultFactory) {
-            synchronized (ActionFactory.class) {
-                if (null == defaultFactory) {
-                    defaultFactory = new ActionFactory();
-                }
-            }
-        }
         return defaultFactory;
     }
 
     public void init(Emark4JConfig config, Emark4JView view, DocumentManager documentManager) throws Exception {
-        if (null != this.config && null != this.view && null != this.documentManager) {
+        if (null != ActionFactory.config && null != ActionFactory.view && null != ActionFactory.documentManager) {
             throw new Exception("the factory has been init!");
         } else {
             doInit(config, view, documentManager);
@@ -64,15 +63,16 @@ public class ActionFactory {
     }
 
     private void doInit(Emark4JConfig config, Emark4JView view, DocumentManager documentManager) {
-        this.config = Objects.requireNonNull(config);
-        this.view = view;
-        this.documentManager = documentManager;
-        this.builderMap = new HashMap<>();
-        this.builderMethodMap = new HashMap<>();
-        this.actionManager = new ActionManager();
-        this.styleMap = new HashMap<>();
+        ActionFactory.config = Objects.requireNonNull(config);
+        ActionFactory.view = view;
+        ActionFactory.documentManager = documentManager;
 
-        ModulePackage declaredAnnotation = defaultFactory.getClass().getDeclaredAnnotation(ModulePackage.class);
+        initActionRegister();
+        initBuilderRegister();
+    }
+
+    private void initActionRegister() {
+        EActionRegisterPackage declaredAnnotation = defaultFactory.getClass().getDeclaredAnnotation(EActionRegisterPackage.class);
         String[] packages = declaredAnnotation.packages();
         for (String aPackage : packages) {
             URL resource = ActionFactory.class.getClassLoader().getResource(aPackage.replace('.', '/'));
@@ -85,55 +85,76 @@ public class ActionFactory {
 
                 try {
                     Class<?> aClass = Class.forName(s);
+                    String basePath = "";
+                    if (aClass.isAnnotationPresent(EActionRegister.class)) {
+                        basePath = aClass.getDeclaredAnnotation(EActionRegister.class).path();
+                    }
                     Object instance = aClass.newInstance();
                     Method[] methods = aClass.getDeclaredMethods();
                     for (Method method : methods) {
-                        ModuleBuilder annotation = method.getDeclaredAnnotation(ModuleBuilder.class);
-                        if (method.isAnnotationPresent(ModuleBuilder.class)) {
-                            builderMap.put(annotation.pattern(), instance);
-                            builderMethodMap.put(annotation.pattern(), method);
+                        if (method.isAnnotationPresent(EActionRegister.class)) {
+                            EActionRegister methodDeclaredAnnotation = method.getDeclaredAnnotation(EActionRegister.class);
+                            ActionListener invoke = (ActionListener) method.invoke(instance);
+                            actionManager.getActionListenerMap().put(basePath + methodDeclaredAnnotation.path(), invoke);
                         }
                     }
-                } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
+                } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
                     e.printStackTrace();
                 }
             }
         }
     }
 
-    public static Object getBuilder(String key) {
-        return getInstance().builderMap.get(key);
+    private void initBuilderRegister() {
+        EBuilderRegisterPackage declaredAnnotation = defaultFactory.getClass().getDeclaredAnnotation(EBuilderRegisterPackage.class);
+        String[] packages = declaredAnnotation.packages();
+        for (String aPackage : packages) {
+            URL resource = ActionFactory.class.getClassLoader().getResource(aPackage.replace('.', '/'));
+            assert resource != null;
+            File path = new File(resource.getPath());
+            String[] list = path.list((dir, name) -> name.endsWith(".class"));
+            assert list != null;
+            for (String s : list) {
+                s = aPackage + "." + s.replace(".class", "");
+
+                try {
+                    Class<?> aClass = Class.forName(s);
+                    String basePath = "";
+                    if (aClass.isAnnotationPresent(EBuilderRegister.class)) {
+                        basePath = aClass.getDeclaredAnnotation(EBuilderRegister.class).path();
+                    }
+                    Object instance = aClass.newInstance();
+                    Method[] methods = aClass.getDeclaredMethods();
+                    for (Method method : methods) {
+                        if (method.isAnnotationPresent(EBuilderRegister.class)) {
+                            EBuilderRegister methodDeclaredAnnotation = method.getDeclaredAnnotation(EBuilderRegister.class);
+                            Builder<?> invoke = (Builder<?>) method.invoke(instance);
+                            actionManager.getBuilderMap().put(basePath + methodDeclaredAnnotation.path(), invoke);
+                        }
+                    }
+                } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
-    public List<Object> builder() {
-        List<Object> objects = new ArrayList<>();
+    public void builder() {
         JSONArray jsonArray = config.getJsonObject().getJSONArray("styles");
         for (int i = 0; i < jsonArray.size(); i++) {
             JSONObject jsonObject = jsonArray.getJSONObject(i);
-            Method method = builderMethodMap.get(jsonObject.getString("pattern"));
-            Object instance = builderMap.get(jsonObject.getString("pattern"));
-            if (null != method) {
-                try {
-                    method.invoke(instance, jsonObject);
-                } catch (IllegalAccessException | InvocationTargetException e) {
-                    e.printStackTrace();
-                }
+            Builder<?> builder = actionManager.getBuilderMap().get(jsonObject.getString("id"));
+            if (null != builder) {
+                builder.builder(jsonObject);
             }
         }
-
-        return objects;
     }
 
     public static <T> T build(JSONObject jsonObject, Class<T> tClass, String pattern) {
-        ActionFactory actionFactory = getInstance();
-        Method method = actionFactory.builderMethodMap.get(pattern);
-        try {
-            Object obj = method.invoke(new HeaderBuilder(), jsonObject);
-            if (obj.getClass() == tClass) {
-                return (T) obj;
-            }
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
+        Builder<?> builder = actionManager.getBuilderMap().get(pattern);
+        Object obj = builder.builder(jsonObject);
+        if (obj.getClass() == tClass) {
+            return (T) obj;
         }
         return null;
     }
@@ -171,19 +192,17 @@ public class ActionFactory {
 
     // tab
     private void registerTextPaneAction() {
-        JTextPane textPane = this.view.getTextPane();
+        JTextPane textPane = view.getTextPane();
         DefaultStyledDocument styledDocument = documentManager.getMarkDocument();
         textPane.setStyledDocument(styledDocument);
-        Style defaultStyle = styleMap.get(Constants.DEFAULT_STYLE_NAME);
+        Style defaultStyle = styleManager.getMapperMap().get(Constants.DEFAULT_STYLE_NAME).getStyle();
         textPane.setFont(styledDocument.getFont(defaultStyle));
         textPane.setBackground(styledDocument.getBackground(defaultStyle));
         textPane.setForeground(styledDocument.getForeground(defaultStyle));
         textPane.setDisabledTextColor(styledDocument.getForeground(defaultStyle));
 
-        actionManager.getMappers().forEach(actionMapper ->
-                textPane.registerKeyboardAction(actionMapper.anAction, actionMapper.aKeyStroke, actionMapper.aCondition));
-
-
+        actionManager.getMapperMap().forEach((s, actionMapper) ->
+                textPane.registerKeyboardAction(actionMapper.getAction(), actionMapper.getaKeyStroke(), actionMapper.getaCondition()));
     }
 
     // tab
@@ -194,44 +213,47 @@ public class ActionFactory {
     }
 
     private void registerTabbedSwitchListener() {
-        this.view.getTabbedPane().addChangeListener(new TabbedSwitchListeners());
+        view.getTabbedPane().addChangeListener(new TabbedSwitchListeners());
     }
 
     private void registerFileAction() {
-        view.getOpenFileButton().addActionListener(actionManager.getMapperMap().get(view.getOpenFileButton().getText()).anAction);
-        view.getSaveFileButton().addActionListener(actionManager.getMapperMap().get(view.getSaveFileButton().getText()).anAction);
+        view.getOpenFileButton().addActionListener(actionManager.getMapperMap().get(view.getOpenFileButton().getText()).getAction());
+        view.getSaveFileButton().addActionListener(actionManager.getMapperMap().get(view.getSaveFileButton().getText()).getAction());
     }
 
     private void registerHeaderAction() {
         for (JButton headerButton : view.getHeaderButtons()) {
-            headerButton.addActionListener(actionManager.getMapperMap().get(headerButton.getText()).anAction);
+            headerButton.addActionListener(actionManager.getMapperMap().get(headerButton.getText()).getAction());
         }
     }
 
     private void registerModeToggleAction() {
-        view.getDocModeToggleButton().addActionListener(actionManager.getMapperMap().get("ActionDocModeToggle").anAction);
-        view.getReadonlyModeToggleButton().addActionListener(actionManager.getMapperMap().get("ActionReadonlyModeToggle").anAction);
+        view.getDocModeToggleButton().addActionListener(actionManager.getMapperMap().get("ActionDocModeToggle").getAction());
+        view.getReadonlyModeToggleButton().addActionListener(actionManager.getMapperMap().get("ActionReadonlyModeToggle").getAction());
     }
 
     public static boolean isRead() {
-        return getInstance().documentManager.getEditMode().isRead();
+        return documentManager.getEditMode().isRead();
     }
 
     public static boolean isWrite() {
-        return getInstance().documentManager.getEditMode().isWrite();
+        return documentManager.getEditMode().isWrite();
     }
 
     public static boolean isSource() {
-        return getInstance().documentManager.getEditMode().isSource();
+        return documentManager.getEditMode().isSource();
     }
 
     public static boolean isEmark() {
-        return getInstance().documentManager.getEditMode().isEmark();
+        return documentManager.getEditMode().isEmark();
     }
 
     public void addActionMapper(ActionManager.ActionMapper actionMapper) {
-        this.actionManager.mappers.add(actionMapper);
-        this.actionManager.mapperMap.put(actionMapper.name, actionMapper);
+        actionManager.getMapperMap().put(actionMapper.getName(), actionMapper);
+    }
+
+    public void addStyleMapper(StyleManager.StyleMapper styleMapper) {
+        styleManager.getMapperMap().put(styleMapper.getName(), styleMapper);
     }
 
     public Emark4JConfig getConfig() {
@@ -246,16 +268,12 @@ public class ActionFactory {
         return documentManager;
     }
 
-    public Map<String, Object> getBuilderMap() {
-        return builderMap;
-    }
-
     public ActionManager getActionManager() {
         return actionManager;
     }
 
-    public Map<String, Style> getStyleMap() {
-        return styleMap;
+    public StyleManager getStyleManager() {
+        return styleManager;
     }
 
     private ActionFactory() {
