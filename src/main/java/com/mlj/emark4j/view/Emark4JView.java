@@ -24,11 +24,11 @@ public class Emark4JView {
     private final JToolBar topToolBar;
     private final JToolBar bottomToolBar;
 
-    private final JButton docModeToggleButton;
-    private final JButton readonlyModeToggleButton;
-    private final JButton[] headerButtons;
-    private final JButton openFileButton;
-    private final JButton saveFileButton;
+    private final EButton docModeToggleButton;
+    private final EButton readonlyModeToggleButton;
+    private final EButton[] headerButtons;
+    private final EButton openFileButton;
+    private final EButton saveFileButton;
 
     public Emark4JView() {
         this.frame = new JFrame();
@@ -42,19 +42,19 @@ public class Emark4JView {
         this.topToolBar = new JToolBar();
         this.bottomToolBar = new JToolBar();
 
-        this.docModeToggleButton = new JButton();
-        this.readonlyModeToggleButton = new JButton();
-        this.headerButtons = new JButton[]{
-                new JButton("Header0"),
-                new JButton("Header1"),
-                new JButton("Header2"),
-                new JButton("Header3"),
-                new JButton("Header4"),
-                new JButton("Header5"),
-                new JButton("Header6"),
+        this.docModeToggleButton = new EButton();
+        this.readonlyModeToggleButton = new EButton();
+        this.headerButtons = new EButton[]{
+                new EButton("Header0"),
+                new EButton("Header1"),
+                new EButton("Header2"),
+                new EButton("Header3"),
+                new EButton("Header4"),
+                new EButton("Header5"),
+                new EButton("Header6"),
         };
-        this.openFileButton = new JButton("ActionFileOpen");
-        this.saveFileButton = new JButton("ActionFileSave");
+        this.openFileButton = new EButton("ActionFileOpen");
+        this.saveFileButton = new EButton("ActionFileSave");
 
         initFrame();
 
@@ -99,7 +99,7 @@ public class Emark4JView {
 
     private void initRightToolBar() {
         this.rightToolBar.setOrientation(JToolBar.VERTICAL);
-        for (JButton headerButton : headerButtons) {
+        for (EButton headerButton : headerButtons) {
             this.rightToolBar.add(headerButton);
         }
         this.rightToolBar.addSeparator();
@@ -160,23 +160,23 @@ public class Emark4JView {
         return bottomToolBar;
     }
 
-    public JButton getDocModeToggleButton() {
+    public EButton getDocModeToggleButton() {
         return docModeToggleButton;
     }
 
-    public JButton getReadonlyModeToggleButton() {
+    public EButton getReadonlyModeToggleButton() {
         return readonlyModeToggleButton;
     }
 
-    public JButton[] getHeaderButtons() {
+    public EButton[] getHeaderButtons() {
         return headerButtons;
     }
 
-    public JButton getOpenFileButton() {
+    public EButton getOpenFileButton() {
         return openFileButton;
     }
 
-    public JButton getSaveFileButton() {
+    public EButton getSaveFileButton() {
         return saveFileButton;
     }
 

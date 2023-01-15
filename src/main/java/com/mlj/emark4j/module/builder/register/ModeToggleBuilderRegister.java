@@ -1,7 +1,9 @@
 package com.mlj.emark4j.module.builder.register;
 
-import com.mlj.emark4j.annotation.EBuilderRegister;
-import com.mlj.emark4j.module.builder.ModeToggleBuilder;
+import com.mlj.emark4j.annotation.EBuilderRegisterPath;
+import com.mlj.emark4j.bean.Constants;
+import com.mlj.emark4j.module.EBuilderRegister;
+import com.mlj.emark4j.module.builder.ModeToggleBuilders;
 
 /**
  * 2023/01/08：
@@ -9,16 +11,15 @@ import com.mlj.emark4j.module.builder.ModeToggleBuilder;
  * @author MLJ
  */
 
-@EBuilderRegister(path = "/editor/mode")
-public class ModeToggleBuilderRegister {
+public class ModeToggleBuilderRegister implements EBuilderRegister {
 
-    @EBuilderRegister(path = "/doc")
-    public ModeToggleBuilder.DocModeToggleBuilder docModeToggleBuilderRegister() {
-        return new ModeToggleBuilder.DocModeToggleBuilder();
+    @EBuilderRegisterPath(paths = Constants.Path.Editor.EDIT_MODE)
+    public ModeToggleBuilders.DocModeToggleEBuilder docModeToggleBuilderRegister() {
+        return new ModeToggleBuilders.DocModeToggleEBuilder();
     }
 
-    @EBuilderRegister(path = "/edit")
-    public ModeToggleBuilder.EditModeToggleBuilderA editModeToggleBuilderARegister() {
-        return new ModeToggleBuilder.EditModeToggleBuilderA();
+    @EBuilderRegisterPath(paths = Constants.Path.Editor.DOC_MODE)
+    public ModeToggleBuilders.EditModeToggleEBuilder editModeToggleBuilderARegister() {
+        return new ModeToggleBuilders.EditModeToggleEBuilder();
     }
 }

@@ -3,6 +3,7 @@ package com.mlj.emark4j.module.action;
 import com.mlj.emark4j.bean.Constants;
 import com.mlj.emark4j.bean.StyleScope;
 import com.mlj.emark4j.module.ActionFactory;
+import com.mlj.emark4j.module.EActionListener;
 import com.mlj.emark4j.module.StyleManager;
 import com.mlj.emark4j.util.DocumentUtil;
 
@@ -11,7 +12,6 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultStyledDocument;
 import javax.swing.text.Style;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Map;
 import java.util.Objects;
 
@@ -20,7 +20,7 @@ import java.util.Objects;
  *
  * @author MLJ
  */
-public class HeaderAction implements ActionListener {
+public class HeaderAction implements EActionListener {
     private final String name;
 
     private final StyleScope styleScope;

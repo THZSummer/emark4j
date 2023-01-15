@@ -1,6 +1,8 @@
 package com.mlj.emark4j.module.builder.register;
 
-import com.mlj.emark4j.annotation.EBuilderRegister;
+import com.mlj.emark4j.annotation.EBuilderRegisterPath;
+import com.mlj.emark4j.bean.Constants;
+import com.mlj.emark4j.module.EBuilderRegister;
 import com.mlj.emark4j.module.builder.FileBuilders;
 
 /**
@@ -9,16 +11,15 @@ import com.mlj.emark4j.module.builder.FileBuilders;
  * @author MLJ
  */
 
-@EBuilderRegister(path = "/file")
-public class FileBuilderRegister {
+public class FileBuilderRegister implements EBuilderRegister {
 
-    @EBuilderRegister(path = "/save")
-    public FileBuilders.FileSaveBuilder fileSaveBuilderRegister() {
-        return new FileBuilders.FileSaveBuilder();
+    @EBuilderRegisterPath(paths = Constants.Path.File.SAVE)
+    public FileBuilders.FileSaveEBuilder fileSaveBuilderRegister() {
+        return new FileBuilders.FileSaveEBuilder();
     }
 
-    @EBuilderRegister(path = "/open")
-    public FileBuilders.FileOpenBuilder fileOpenBuilderRegister() {
-        return new FileBuilders.FileOpenBuilder();
+    @EBuilderRegisterPath(paths = Constants.Path.File.OPEN)
+    public FileBuilders.FileOpenEBuilder fileOpenBuilderRegister() {
+        return new FileBuilders.FileOpenEBuilder();
     }
 }

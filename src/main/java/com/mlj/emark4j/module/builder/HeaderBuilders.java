@@ -4,9 +4,9 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.mlj.emark4j.bean.Constants;
 import com.mlj.emark4j.bean.Font;
+import com.mlj.emark4j.module.ActionEBuilder;
 import com.mlj.emark4j.module.ActionFactory;
 import com.mlj.emark4j.module.ActionManager;
-import com.mlj.emark4j.module.Builder;
 import com.mlj.emark4j.module.StyleManager;
 
 import javax.swing.*;
@@ -24,22 +24,21 @@ import java.awt.*;
 
 public class HeaderBuilders {
 
-    public static class HeaderBuilder implements Builder<ActionManager.ActionMapper> {
+    public static class HeaderEBuilder implements ActionEBuilder {
 
         @Override
         public ActionManager.ActionMapper builder(JSONObject jsonObject) {
             String path = jsonObject.getString("id");
-            String name = jsonObject.getString("name");
             String pattern = jsonObject.getString("pattern");
 
             DefaultStyledDocument styledDocument = ActionFactory.getInstance().getDocumentManager().getMarkDocument();
-            Style header = styledDocument.addStyle(name, Constants.DEFAULT_STYLE_NAME.equals(name) ? null : styledDocument.getStyle(Constants.DEFAULT_STYLE_NAME));
+            Style header = styledDocument.addStyle(path, Constants.DEFAULT_STYLE_NAME.equals(path) ? null : styledDocument.getStyle(Constants.DEFAULT_STYLE_NAME));
 
             Font font = ActionFactory.build(jsonObject.getJSONObject("font"), Font.class, "/element/font");
             if (null != font) {
                 StyleConstants.ParagraphConstants.setFontFamily(header, font.getFontFamily());
                 StyleConstants.ParagraphConstants.setFontSize(header, font.getFontSize());
-                if (!Constants.DEFAULT_STYLE_NAME.equals(name)) {
+                if (!Constants.DEFAULT_STYLE_NAME.equals(path)) {
                     StyleConstants.FontConstants.setBold(header, true);
                     SimpleAttributeSet header0 = new SimpleAttributeSet();
                     header0.addAttribute(StyleConstants.ParagraphConstants.SpaceAbove, font.getFontSize() / 2f);
@@ -68,47 +67,18 @@ public class HeaderBuilders {
                 StyleConstants.ColorConstants.setBackground(header, ActionFactory.build(backColor, Color.class, "/element/color"));
             }
 
-            ActionFactory.getInstance().addStyleMapper(new StyleManager.StyleMapper(name, pattern, header));
+            ActionFactory.getInstance().addStyleMapper(new StyleManager.StyleMapper(path, pattern, header));
 
             JSONArray keymaps = jsonObject.getJSONArray("keymaps");
 
             KeyStroke keyStroke = ActionFactory.build(keymaps.getJSONObject(0), KeyStroke.class, "/element/keymap");
 
-            ActionManager.ActionMapper actionMapper = new ActionManager.ActionMapper(name, ActionFactory.getInstance().getActionManager().getActionListenerMap().get(path), keyStroke);
+            ActionManager.ActionMapper actionMapper = new ActionManager.ActionMapper(path, ActionFactory.getInstance().getActionManager().getActionListenerMap().get(path), keyStroke);
 
             ActionFactory.getInstance().addActionMapper(actionMapper);
             return actionMapper;
         }
     }
 
-    public static class KeyMapBuilder implements Builder<KeyStroke> {
 
-        @Override
-        public KeyStroke builder(JSONObject jsonObject) {
-            String[] keys = jsonObject.getObject("keys", String[].class);
-            return KeyStroke.getKeyStroke(keys[0] + " " + keys[1]);
-        }
-    }
-
-    public static class FontBuilder implements Builder<Font> {
-
-        @Override
-        public Font builder(JSONObject jsonObject) {
-            Font font = new Font();
-            String fontFamily = jsonObject.getString("fontFamily");
-            Integer fontSize = jsonObject.getInteger("fontSize");
-            if (null != fontFamily) font.setFontFamily(fontFamily);
-            if (null != fontSize) font.setFontSize(fontSize);
-            return font;
-        }
-    }
-
-    public static class ColorBuilder implements Builder<Color> {
-
-        @Override
-        public Color builder(JSONObject jsonObject) {
-            int[] rgba = jsonObject.getObject("rgba", int[].class);
-            return new Color(rgba[0], rgba[1], rgba[2], rgba[3]);
-        }
-    }
 }

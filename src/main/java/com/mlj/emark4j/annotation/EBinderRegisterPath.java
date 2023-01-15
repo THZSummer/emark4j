@@ -10,8 +10,8 @@ import java.lang.annotation.Target;
  *
  * @author MLJ
  */
-@Target({ElementType.TYPE, ElementType.METHOD})
+@Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface EActionRegister {
-    String path() default "";
+public @interface EBinderRegisterPath {
+    String[] paths() default {};
 }

@@ -1,6 +1,8 @@
 package com.mlj.emark4j.module.builder.register;
 
-import com.mlj.emark4j.annotation.EBuilderRegister;
+import com.mlj.emark4j.annotation.EBuilderRegisterPath;
+import com.mlj.emark4j.bean.Constants;
+import com.mlj.emark4j.module.EBuilderRegister;
 import com.mlj.emark4j.module.builder.HeaderBuilders;
 
 /**
@@ -9,41 +11,40 @@ import com.mlj.emark4j.module.builder.HeaderBuilders;
  * @author MLJ
  */
 
-@EBuilderRegister(path = "/header")
-public class HeaderBuilderRegister {
+public class HeaderBuilderRegister implements EBuilderRegister {
 
-    @EBuilderRegister(path = "/header0")
-    public HeaderBuilders.HeaderBuilder header0BuilderRegister() {
-        return new HeaderBuilders.HeaderBuilder();
+    @EBuilderRegisterPath(paths = Constants.Path.Header.HEADER0)
+    public HeaderBuilders.HeaderEBuilder header0BuilderRegister() {
+        return new HeaderBuilders.HeaderEBuilder();
     }
 
-    @EBuilderRegister(path = "/header1")
-    public HeaderBuilders.HeaderBuilder header1BuilderRegister() {
-        return new HeaderBuilders.HeaderBuilder();
+    @EBuilderRegisterPath(paths = Constants.Path.Header.HEADER1)
+    public HeaderBuilders.HeaderEBuilder header1BuilderRegister() {
+        return new HeaderBuilders.HeaderEBuilder();
     }
 
-    @EBuilderRegister(path = "/header2")
-    public HeaderBuilders.HeaderBuilder header2BuilderRegister() {
-        return new HeaderBuilders.HeaderBuilder();
+    @EBuilderRegisterPath(paths = Constants.Path.Header.HEADER2)
+    public HeaderBuilders.HeaderEBuilder header2BuilderRegister() {
+        return new HeaderBuilders.HeaderEBuilder();
     }
 
-    @EBuilderRegister(path = "/header3")
-    public HeaderBuilders.HeaderBuilder header3BuilderRegister() {
-        return new HeaderBuilders.HeaderBuilder();
+    @EBuilderRegisterPath(paths = Constants.Path.Header.HEADER3)
+    public HeaderBuilders.HeaderEBuilder header3BuilderRegister() {
+        return new HeaderBuilders.HeaderEBuilder();
     }
 
-    @EBuilderRegister(path = "/header4")
-    public HeaderBuilders.HeaderBuilder header4BuilderRegister() {
-        return new HeaderBuilders.HeaderBuilder();
+    @EBuilderRegisterPath(paths = Constants.Path.Header.HEADER4)
+    public HeaderBuilders.HeaderEBuilder header4BuilderRegister() {
+        return new HeaderBuilders.HeaderEBuilder();
     }
 
-    @EBuilderRegister(path = "/header5")
-    public HeaderBuilders.HeaderBuilder header5BuilderRegister() {
-        return new HeaderBuilders.HeaderBuilder();
+    @EBuilderRegisterPath(paths = Constants.Path.Header.HEADER5)
+    public HeaderBuilders.HeaderEBuilder header5BuilderRegister() {
+        return new HeaderBuilders.HeaderEBuilder();
     }
 
-    @EBuilderRegister(path = "/header6")
-    public HeaderBuilders.HeaderBuilder header6BuilderRegister() {
-        return new HeaderBuilders.HeaderBuilder();
+    @EBuilderRegisterPath(paths = Constants.Path.Header.HEADER6)
+    public HeaderBuilders.HeaderEBuilder header6BuilderRegister() {
+        return new HeaderBuilders.HeaderEBuilder();
     }
 }

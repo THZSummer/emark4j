@@ -7,7 +7,7 @@ import com.alibaba.fastjson.JSONObject;
  *
  * @author MLJ
  */
-public interface Builder<R> {
+public interface EBuilder<R> {
 
     R builder(JSONObject jsonObject);
 }

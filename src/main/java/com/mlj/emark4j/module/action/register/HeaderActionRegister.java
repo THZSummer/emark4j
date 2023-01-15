@@ -1,6 +1,8 @@
 package com.mlj.emark4j.module.action.register;
 
-import com.mlj.emark4j.annotation.EActionRegister;
+import com.mlj.emark4j.annotation.EActionRegisterPath;
+import com.mlj.emark4j.bean.Constants;
+import com.mlj.emark4j.module.EActionRegister;
 import com.mlj.emark4j.module.action.HeaderAction;
 
 /**
@@ -9,41 +11,40 @@ import com.mlj.emark4j.module.action.HeaderAction;
  * @author MLJ
  */
 
-@EActionRegister(path = "/header")
-public class HeaderActionRegister {
+public class HeaderActionRegister implements EActionRegister {
 
-    @EActionRegister(path = "/header0")
+    @EActionRegisterPath(paths = Constants.Path.Header.HEADER0)
     public HeaderAction header0ActionRegister() {
-        return new HeaderAction("Header0");
+        return new HeaderAction(Constants.Path.Header.HEADER0);
     }
 
-    @EActionRegister(path = "/header1")
+    @EActionRegisterPath(paths = Constants.Path.Header.HEADER1)
     public HeaderAction header1ActionRegister() {
-        return new HeaderAction("Header1");
+        return new HeaderAction(Constants.Path.Header.HEADER1);
     }
 
-    @EActionRegister(path = "/header2")
+    @EActionRegisterPath(paths = Constants.Path.Header.HEADER2)
     public HeaderAction header2ActionRegister() {
-        return new HeaderAction("Header2");
+        return new HeaderAction(Constants.Path.Header.HEADER2);
     }
 
-    @EActionRegister(path = "/header3")
+    @EActionRegisterPath(paths = Constants.Path.Header.HEADER3)
     public HeaderAction header3ActionRegister() {
-        return new HeaderAction("Header3");
+        return new HeaderAction(Constants.Path.Header.HEADER3);
     }
 
-    @EActionRegister(path = "/header4")
+    @EActionRegisterPath(paths = Constants.Path.Header.HEADER4)
     public HeaderAction header4ActionRegister() {
-        return new HeaderAction("Header4");
+        return new HeaderAction(Constants.Path.Header.HEADER4);
     }
 
-    @EActionRegister(path = "/header5")
+    @EActionRegisterPath(paths = Constants.Path.Header.HEADER5)
     public HeaderAction header5ActionRegister() {
-        return new HeaderAction("Header5");
+        return new HeaderAction(Constants.Path.Header.HEADER5);
     }
 
-    @EActionRegister(path = "/header6")
+    @EActionRegisterPath(paths = Constants.Path.Header.HEADER6)
     public HeaderAction header6ActionRegister() {
-        return new HeaderAction("Header6");
+        return new HeaderAction(Constants.Path.Header.HEADER6);
     }
 }

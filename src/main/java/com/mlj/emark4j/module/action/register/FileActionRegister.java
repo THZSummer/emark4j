@@ -1,6 +1,8 @@
 package com.mlj.emark4j.module.action.register;
 
-import com.mlj.emark4j.annotation.EActionRegister;
+import com.mlj.emark4j.annotation.EActionRegisterPath;
+import com.mlj.emark4j.bean.Constants;
+import com.mlj.emark4j.module.EActionRegister;
 import com.mlj.emark4j.module.action.OpenFileAction;
 import com.mlj.emark4j.module.action.SaveFileAction;
 
@@ -10,15 +12,14 @@ import com.mlj.emark4j.module.action.SaveFileAction;
  * @author MLJ
  */
 
-@EActionRegister(path = "/file")
-public class FileActionRegister {
+public class FileActionRegister implements EActionRegister {
 
-    @EActionRegister(path = "/open")
+    @EActionRegisterPath(paths = Constants.Path.File.OPEN)
     public OpenFileAction openFileActionRegister() {
         return new OpenFileAction();
     }
 
-    @EActionRegister(path = "/save")
+    @EActionRegisterPath(paths = Constants.Path.File.SAVE)
     public SaveFileAction saveFileActionRegister() {
         return new SaveFileAction();
     }

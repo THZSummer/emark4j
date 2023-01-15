@@ -1,7 +1,9 @@
 package com.mlj.emark4j.module.builder.register;
 
-import com.mlj.emark4j.annotation.EBuilderRegister;
-import com.mlj.emark4j.module.builder.HeaderBuilders;
+import com.mlj.emark4j.annotation.EBuilderRegisterPath;
+import com.mlj.emark4j.bean.Constants;
+import com.mlj.emark4j.module.EBuilderRegister;
+import com.mlj.emark4j.module.builder.ElementBuilders;
 
 /**
  * 2023/01/08：
@@ -9,21 +11,20 @@ import com.mlj.emark4j.module.builder.HeaderBuilders;
  * @author MLJ
  */
 
-@EBuilderRegister(path = "/element")
-public class ElementBuilderRegister {
+public class ElementBuilderRegister implements EBuilderRegister {
 
-    @EBuilderRegister(path = "/color")
-    public HeaderBuilders.ColorBuilder colorBuilderRegister() {
-        return new HeaderBuilders.ColorBuilder();
+    @EBuilderRegisterPath(paths = Constants.Path.Element.COLOR)
+    public ElementBuilders.ColorEBuilder colorBuilderRegister() {
+        return new ElementBuilders.ColorEBuilder();
     }
 
-    @EBuilderRegister(path = "/font")
-    public HeaderBuilders.FontBuilder fontBuilderRegister() {
-        return new HeaderBuilders.FontBuilder();
+    @EBuilderRegisterPath(paths = Constants.Path.Element.FONT)
+    public ElementBuilders.FontEBuilder fontBuilderRegister() {
+        return new ElementBuilders.FontEBuilder();
     }
 
-    @EBuilderRegister(path = "/keymap")
-    public HeaderBuilders.KeyMapBuilder keyMapBuilderRegister() {
-        return new HeaderBuilders.KeyMapBuilder();
+    @EBuilderRegisterPath(paths = Constants.Path.Element.KEYMAP)
+    public ElementBuilders.KeyMapEBuilder keyMapBuilderRegister() {
+        return new ElementBuilders.KeyMapEBuilder();
     }
 }

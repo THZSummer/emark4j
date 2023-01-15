@@ -15,7 +15,7 @@ public enum EditMode {
     private final int edit;
     private final int doc;
 
-    private EditMode(String name, int edit, int doc) {
+    EditMode(String name, int edit, int doc) {
         this.name = name;
         this.edit = edit;
         this.doc = doc;

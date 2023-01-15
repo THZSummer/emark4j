@@ -2,6 +2,7 @@ package com.mlj.emark4j.module.action;
 
 import com.mlj.emark4j.module.ActionFactory;
 import com.mlj.emark4j.module.DocumentManager;
+import com.mlj.emark4j.module.EActionListener;
 import com.mlj.emark4j.view.Emark4JView;
 
 import javax.swing.*;
@@ -9,7 +10,6 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultStyledDocument;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -17,6 +17,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 2022/09/24：
@@ -24,7 +25,7 @@ import java.nio.charset.StandardCharsets;
  * @author MLJ
  */
 
-public class OpenFileAction implements ActionListener {
+public class OpenFileAction implements EActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -72,7 +73,7 @@ public class OpenFileAction implements ActionListener {
                     String line = new String(array, 0, read);
                     document.insertString(document.getLength(), line, null);
                     byteBuffer.clear();
-                    Thread.sleep(1000);
+                    TimeUnit.MILLISECONDS.sleep(1000);
                 }
 
             } catch (IOException | InterruptedException | BadLocationException ex) {

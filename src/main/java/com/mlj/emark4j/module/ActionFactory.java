@@ -2,15 +2,14 @@ package com.mlj.emark4j.module;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.mlj.emark4j.annotation.EActionRegister;
-import com.mlj.emark4j.annotation.EActionRegisterPackage;
-import com.mlj.emark4j.annotation.EBuilderRegister;
-import com.mlj.emark4j.annotation.EBuilderRegisterPackage;
+import com.mlj.emark4j.annotation.*;
 import com.mlj.emark4j.bean.Constants;
 import com.mlj.emark4j.bean.Emark4JConfig;
 import com.mlj.emark4j.module.listener.SyncDocumentListeners;
 import com.mlj.emark4j.module.listener.TabbedSwitchListeners;
+import com.mlj.emark4j.view.EButton;
 import com.mlj.emark4j.view.Emark4JView;
+import com.mlj.emark4j.view.binder.ActionListenerBind2ButtonBinder;
 
 import javax.swing.*;
 import javax.swing.text.DefaultStyledDocument;
@@ -21,6 +20,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URL;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -29,8 +29,10 @@ import java.util.Objects;
  * @author MLJ
  */
 
-@EActionRegisterPackage(packages = {"com.mlj.emark4j.module.action.register"})
-@EBuilderRegisterPackage(packages = {"com.mlj.emark4j.module.builder.register"})
+@EActionRegisterPackage(packages = "com.mlj.emark4j.module.action.register")
+@EBuilderRegisterPackage(packages = "com.mlj.emark4j.module.builder.register")
+@EBinderRegisterPackage(packages = "com.mlj.emark4j.view.binder.register")
+@EBindPackage(packages = "com.mlj.emark4j.view.binder.bind")
 public class ActionFactory {
     private static Emark4JConfig config;
 
@@ -69,6 +71,9 @@ public class ActionFactory {
 
         initActionRegister();
         initBuilderRegister();
+        initBinderRegister();
+
+        initBind();
     }
 
     private void initActionRegister() {
@@ -85,17 +90,15 @@ public class ActionFactory {
 
                 try {
                     Class<?> aClass = Class.forName(s);
-                    String basePath = "";
-                    if (aClass.isAnnotationPresent(EActionRegister.class)) {
-                        basePath = aClass.getDeclaredAnnotation(EActionRegister.class).path();
-                    }
                     Object instance = aClass.newInstance();
                     Method[] methods = aClass.getDeclaredMethods();
                     for (Method method : methods) {
-                        if (method.isAnnotationPresent(EActionRegister.class)) {
-                            EActionRegister methodDeclaredAnnotation = method.getDeclaredAnnotation(EActionRegister.class);
-                            ActionListener invoke = (ActionListener) method.invoke(instance);
-                            actionManager.getActionListenerMap().put(basePath + methodDeclaredAnnotation.path(), invoke);
+                        if (method.isAnnotationPresent(EActionRegisterPath.class)) {
+                            EActionRegisterPath methodDeclaredAnnotation = method.getDeclaredAnnotation(EActionRegisterPath.class);
+                            ActionListener action = (ActionListener) method.invoke(instance);
+                            if (methodDeclaredAnnotation.paths().length > 0) {
+                                actionManager.getActionListenerMap().put(methodDeclaredAnnotation.paths()[0], action);
+                            }
                         }
                     }
                 } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
@@ -119,17 +122,85 @@ public class ActionFactory {
 
                 try {
                     Class<?> aClass = Class.forName(s);
-                    String basePath = "";
-                    if (aClass.isAnnotationPresent(EBuilderRegister.class)) {
-                        basePath = aClass.getDeclaredAnnotation(EBuilderRegister.class).path();
-                    }
                     Object instance = aClass.newInstance();
                     Method[] methods = aClass.getDeclaredMethods();
                     for (Method method : methods) {
-                        if (method.isAnnotationPresent(EBuilderRegister.class)) {
-                            EBuilderRegister methodDeclaredAnnotation = method.getDeclaredAnnotation(EBuilderRegister.class);
-                            Builder<?> invoke = (Builder<?>) method.invoke(instance);
-                            actionManager.getBuilderMap().put(basePath + methodDeclaredAnnotation.path(), invoke);
+                        if (method.isAnnotationPresent(EBuilderRegisterPath.class)) {
+                            EBuilderRegisterPath methodDeclaredAnnotation = method.getDeclaredAnnotation(EBuilderRegisterPath.class);
+                            if (methodDeclaredAnnotation.paths().length > 0) {
+                                EBuilder<?> invoke = (EBuilder<?>) method.invoke(instance);
+                                actionManager.getBuilderMap().put(methodDeclaredAnnotation.paths()[0], invoke);
+                            }
+                        }
+                    }
+                } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    private void initBinderRegister() {
+        EBinderRegisterPackage declaredAnnotation = defaultFactory.getClass().getDeclaredAnnotation(EBinderRegisterPackage.class);
+        String[] packages = declaredAnnotation.packages();
+        for (String aPackage : packages) {
+            URL resource = ActionFactory.class.getClassLoader().getResource(aPackage.replace('.', '/'));
+            assert resource != null;
+            File path = new File(resource.getPath());
+            String[] list = path.list((dir, name) -> name.endsWith(".class"));
+            assert list != null;
+            for (String s : list) {
+                s = aPackage + "." + s.replace(".class", "");
+
+                try {
+                    Class<?> aClass = Class.forName(s);
+                    Object instance = aClass.newInstance();
+                    Method[] methods = aClass.getDeclaredMethods();
+                    for (Method method : methods) {
+                        if (method.isAnnotationPresent(EBinderRegisterPath.class)) {
+                            EBinderRegisterPath methodDeclaredAnnotation = method.getDeclaredAnnotation(EBinderRegisterPath.class);
+                            if (methodDeclaredAnnotation.paths().length > 0) {
+                                EBinder<?, ?> invoke = (EBinder<?, ?>) method.invoke(instance);
+                                actionManager.getBinderMap().put(methodDeclaredAnnotation.paths()[0], invoke);
+                            }
+                        }
+                    }
+                } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    private void initBind() {
+        EBindPackage declaredAnnotation = defaultFactory.getClass().getDeclaredAnnotation(EBindPackage.class);
+        String[] packages = declaredAnnotation.packages();
+        for (String aPackage : packages) {
+            URL resource = ActionFactory.class.getClassLoader().getResource(aPackage.replace('.', '/'));
+            assert resource != null;
+            File path = new File(resource.getPath());
+            String[] list = path.list((dir, name) -> name.endsWith(".class"));
+            assert list != null;
+            for (String s : list) {
+                s = aPackage + "." + s.replace(".class", "");
+
+                try {
+                    Class<?> aClass = Class.forName(s);
+                    Object instance = aClass.newInstance();
+                    Method[] methods = aClass.getDeclaredMethods();
+                    for (Method field : methods) {
+                        if (field.isAnnotationPresent(EBindPath.class)) {
+                            EBindPath methodDeclaredAnnotation = field.getDeclaredAnnotation(EBindPath.class);
+                            String[] paths = methodDeclaredAnnotation.paths();
+                            if (paths.length > 0) {
+                                Object obj = field.invoke(instance);
+
+                                if (paths.length == 1) {
+                                    actionManager.getActionListenerBind2ButtonBinderMap().put(paths[0], (EButton) obj);
+                                } else {
+                                    actionManager.getKeyboardActionBind2ComponentBinderMap().put((JComponent) obj, paths);
+                                }
+                            }
                         }
                     }
                 } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
@@ -143,16 +214,16 @@ public class ActionFactory {
         JSONArray jsonArray = config.getJsonObject().getJSONArray("styles");
         for (int i = 0; i < jsonArray.size(); i++) {
             JSONObject jsonObject = jsonArray.getJSONObject(i);
-            Builder<?> builder = actionManager.getBuilderMap().get(jsonObject.getString("id"));
-            if (null != builder) {
-                builder.builder(jsonObject);
+            EBuilder<?> eBuilder = actionManager.getBuilderMap().get(jsonObject.getString("id"));
+            if (null != eBuilder) {
+                eBuilder.builder(jsonObject);
             }
         }
     }
 
     public static <T> T build(JSONObject jsonObject, Class<T> tClass, String pattern) {
-        Builder<?> builder = actionManager.getBuilderMap().get(pattern);
-        Object obj = builder.builder(jsonObject);
+        EBuilder<?> eBuilder = actionManager.getBuilderMap().get(pattern);
+        Object obj = eBuilder.builder(jsonObject);
         if (obj.getClass() == tClass) {
             return (T) obj;
         }
@@ -160,17 +231,19 @@ public class ActionFactory {
     }
 
     public void registerAction() {
-        registerTextPaneAction();
+        binder();
 
         registerSyncDocumentListener();
 
-        registerHeaderAction();
-
-        registerFileAction();
-
-        registerModeToggleAction();
-
         registerTabbedSwitchListener();
+    }
+
+    public void binder() {
+        actionManager.getActionListenerBind2ButtonBinderMap().forEach((s, button) ->
+                ((ActionListenerBind2ButtonBinder) actionManager.getBinderMap().get(s))
+                        .binder(actionManager.getActionListenerMap().get(s), button));
+
+        registerTextPaneAction();
     }
 
     public void openNewTab(URI uri) {
@@ -201,8 +274,15 @@ public class ActionFactory {
         textPane.setForeground(styledDocument.getForeground(defaultStyle));
         textPane.setDisabledTextColor(styledDocument.getForeground(defaultStyle));
 
-        actionManager.getMapperMap().forEach((s, actionMapper) ->
-                textPane.registerKeyboardAction(actionMapper.getAction(), actionMapper.getaKeyStroke(), actionMapper.getaCondition()));
+        Map<String, ActionManager.ActionMapper> mapperMap = actionManager.getMapperMap();
+        for (Map.Entry<JComponent, String[]> entry : actionManager.getKeyboardActionBind2ComponentBinderMap().entrySet()) {
+            JComponent component = entry.getKey();
+            String[] strings = entry.getValue();
+            for (String string : strings) {
+                ActionManager.ActionMapper actionMapper = mapperMap.get(string);
+                component.registerKeyboardAction(actionMapper.getAction(), actionMapper.getaKeyStroke(), actionMapper.getaCondition());
+            }
+        }
     }
 
     // tab
@@ -214,22 +294,6 @@ public class ActionFactory {
 
     private void registerTabbedSwitchListener() {
         view.getTabbedPane().addChangeListener(new TabbedSwitchListeners());
-    }
-
-    private void registerFileAction() {
-        view.getOpenFileButton().addActionListener(actionManager.getMapperMap().get(view.getOpenFileButton().getText()).getAction());
-        view.getSaveFileButton().addActionListener(actionManager.getMapperMap().get(view.getSaveFileButton().getText()).getAction());
-    }
-
-    private void registerHeaderAction() {
-        for (JButton headerButton : view.getHeaderButtons()) {
-            headerButton.addActionListener(actionManager.getMapperMap().get(headerButton.getText()).getAction());
-        }
-    }
-
-    private void registerModeToggleAction() {
-        view.getDocModeToggleButton().addActionListener(actionManager.getMapperMap().get("ActionDocModeToggle").getAction());
-        view.getReadonlyModeToggleButton().addActionListener(actionManager.getMapperMap().get("ActionReadonlyModeToggle").getAction());
     }
 
     public static boolean isRead() {

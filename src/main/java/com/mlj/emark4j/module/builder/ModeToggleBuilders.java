@@ -2,9 +2,9 @@ package com.mlj.emark4j.module.builder;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.mlj.emark4j.module.ActionEBuilder;
 import com.mlj.emark4j.module.ActionFactory;
 import com.mlj.emark4j.module.ActionManager;
-import com.mlj.emark4j.module.Builder;
 
 import javax.swing.*;
 import java.awt.event.InputEvent;
@@ -14,20 +14,19 @@ import java.awt.event.InputEvent;
  *
  * @author MLJ
  */
-public class ModeToggleBuilder {
+public class ModeToggleBuilders {
 
-    public static class DocModeToggleBuilder implements Builder<ActionManager.ActionMapper> {
+    public static class DocModeToggleEBuilder implements ActionEBuilder {
 
         @Override
         public ActionManager.ActionMapper builder(JSONObject jsonObject) {
             String path = jsonObject.getString("id");
-            String name = jsonObject.getString("name");
             JSONArray keymaps = jsonObject.getJSONArray("keymaps");
 
 //        KeyStroke keyStroke = ActionFactory.build(keymaps.getJSONObject(0), KeyStroke.class, "^keymap$");
             KeyStroke keyStroke = KeyStroke.getKeyStroke(KeyStroke.getKeyStroke('/').getKeyChar(), InputEvent.CTRL_DOWN_MASK);
 
-            ActionManager.ActionMapper actionMapper = new ActionManager.ActionMapper(name, ActionFactory.getInstance().getActionManager().getActionListenerMap().get(path), keyStroke);
+            ActionManager.ActionMapper actionMapper = new ActionManager.ActionMapper(path, ActionFactory.getInstance().getActionManager().getActionListenerMap().get(path), keyStroke);
 
             ActionFactory.getInstance().addActionMapper(actionMapper);
 
@@ -35,18 +34,17 @@ public class ModeToggleBuilder {
         }
     }
 
-    public static class EditModeToggleBuilderA implements Builder<ActionManager.ActionMapper> {
+    public static class EditModeToggleEBuilder implements ActionEBuilder {
 
         @Override
         public ActionManager.ActionMapper builder(JSONObject jsonObject) {
             String path = jsonObject.getString("id");
-            String name = jsonObject.getString("name");
             JSONArray keymaps = jsonObject.getJSONArray("keymaps");
 
 //        KeyStroke keyStroke = ActionFactory.build(keymaps.getJSONObject(0), KeyStroke.class, "^keymap$");
             KeyStroke keyStroke = KeyStroke.getKeyStroke(KeyStroke.getKeyStroke('/').getKeyChar(), InputEvent.CTRL_DOWN_MASK);
 
-            ActionManager.ActionMapper actionMapper = new ActionManager.ActionMapper(name, ActionFactory.getInstance().getActionManager().getActionListenerMap().get(path), keyStroke);
+            ActionManager.ActionMapper actionMapper = new ActionManager.ActionMapper(path, ActionFactory.getInstance().getActionManager().getActionListenerMap().get(path), keyStroke);
 
             ActionFactory.getInstance().addActionMapper(actionMapper);
 

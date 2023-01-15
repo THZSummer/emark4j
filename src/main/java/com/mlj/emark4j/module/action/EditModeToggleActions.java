@@ -3,10 +3,10 @@ package com.mlj.emark4j.module.action;
 import com.mlj.emark4j.bean.EditMode;
 import com.mlj.emark4j.module.ActionFactory;
 import com.mlj.emark4j.module.DocumentManager;
+import com.mlj.emark4j.module.EActionListener;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 /**
  * 2022/09/30：
@@ -15,7 +15,7 @@ import java.awt.event.ActionListener;
  */
 public class EditModeToggleActions {
 
-    public static class DocModeToggleAction implements ActionListener {
+    public static class DocModeToggleAction implements EActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
             JTextPane textPane = ActionFactory.getInstance().getView().getTextPane();
@@ -31,7 +31,7 @@ public class EditModeToggleActions {
         }
     }
 
-    public static class ReadonlyModeToggleAction implements ActionListener {
+    public static class ReadonlyModeToggleAction implements EActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
             JTextPane textPane = ActionFactory.getInstance().getView().getTextPane();

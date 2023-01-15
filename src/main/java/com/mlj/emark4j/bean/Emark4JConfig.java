@@ -11,7 +11,7 @@ import java.io.InputStream;
  * @author MLJ
  */
 public class Emark4JConfig {
-    private JSONObject jsonObject;
+    private final JSONObject jsonObject;
 
     public Emark4JConfig(InputStream configStream) {
         this.jsonObject = JsonUtil.read(configStream);
@@ -21,7 +21,4 @@ public class Emark4JConfig {
         return jsonObject;
     }
 
-    public void setJsonObject(JSONObject jsonObject) {
-        this.jsonObject = jsonObject;
-    }
 }

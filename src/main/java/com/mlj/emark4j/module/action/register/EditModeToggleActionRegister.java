@@ -1,6 +1,8 @@
 package com.mlj.emark4j.module.action.register;
 
-import com.mlj.emark4j.annotation.EActionRegister;
+import com.mlj.emark4j.annotation.EActionRegisterPath;
+import com.mlj.emark4j.bean.Constants;
+import com.mlj.emark4j.module.EActionRegister;
 import com.mlj.emark4j.module.action.EditModeToggleActions;
 
 /**
@@ -9,15 +11,14 @@ import com.mlj.emark4j.module.action.EditModeToggleActions;
  * @author MLJ
  */
 
-@EActionRegister(path = "/editor/mode")
-public class EditModeToggleActionRegister {
+public class EditModeToggleActionRegister implements EActionRegister {
 
-    @EActionRegister(path = "/doc")
+    @EActionRegisterPath(paths = Constants.Path.Editor.DOC_MODE)
     public EditModeToggleActions.DocModeToggleAction docModeToggleActionRegister() {
         return new EditModeToggleActions.DocModeToggleAction();
     }
 
-    @EActionRegister(path = "/edit")
+    @EActionRegisterPath(paths = Constants.Path.Editor.EDIT_MODE)
     public EditModeToggleActions.ReadonlyModeToggleAction readonlyModeToggleActionRegister() {
         return new EditModeToggleActions.ReadonlyModeToggleAction();
     }

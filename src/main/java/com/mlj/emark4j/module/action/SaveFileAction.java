@@ -1,13 +1,13 @@
 package com.mlj.emark4j.module.action;
 
 import com.mlj.emark4j.module.ActionFactory;
+import com.mlj.emark4j.module.EActionListener;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultStyledDocument;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -19,7 +19,7 @@ import java.net.URI;
  *
  * @author MLJ
  */
-public class SaveFileAction implements ActionListener {
+public class SaveFileAction implements EActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         URI uri = getURI();
