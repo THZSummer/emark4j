@@ -7,6 +7,7 @@ import com.mlj.emark4j.bean.Constants;
 import com.mlj.emark4j.bean.Emark4JConfig;
 import com.mlj.emark4j.module.listener.SyncDocumentListeners;
 import com.mlj.emark4j.module.listener.TabbedSwitchListeners;
+import com.mlj.emark4j.util.ClassUtil;
 import com.mlj.emark4j.view.EButton;
 import com.mlj.emark4j.view.Emark4JView;
 import com.mlj.emark4j.view.binder.ActionListenerBind2ButtonBinder;
@@ -16,10 +17,7 @@ import javax.swing.text.DefaultStyledDocument;
 import javax.swing.text.Style;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.URI;
-import java.net.URL;
 import java.util.Map;
 import java.util.Objects;
 
@@ -79,135 +77,54 @@ public class ActionFactory {
     private void initActionRegister() {
         EActionRegisterPackage declaredAnnotation = defaultFactory.getClass().getDeclaredAnnotation(EActionRegisterPackage.class);
         String[] packages = declaredAnnotation.packages();
-        for (String aPackage : packages) {
-            URL resource = ActionFactory.class.getClassLoader().getResource(aPackage.replace('.', '/'));
-            assert resource != null;
-            File path = new File(resource.getPath());
-            String[] list = path.list((dir, name) -> name.endsWith(".class"));
-            assert list != null;
-            for (String s : list) {
-                s = aPackage + "." + s.replace(".class", "");
 
-                try {
-                    Class<?> aClass = Class.forName(s);
-                    Object instance = aClass.newInstance();
-                    Method[] methods = aClass.getDeclaredMethods();
-                    for (Method method : methods) {
-                        if (method.isAnnotationPresent(EActionRegisterPath.class)) {
-                            EActionRegisterPath methodDeclaredAnnotation = method.getDeclaredAnnotation(EActionRegisterPath.class);
-                            ActionListener action = (ActionListener) method.invoke(instance);
-                            if (methodDeclaredAnnotation.paths().length > 0) {
-                                actionManager.getActionListenerMap().put(methodDeclaredAnnotation.paths()[0], action);
-                            }
-                        }
-                    }
-                } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
-                    e.printStackTrace();
-                }
+        ClassUtil.scanPackagesMethod(packages, EActionRegisterPath.class, (annotation, obj) -> {
+            String[] paths = ((EActionRegisterPath) annotation).paths();
+            if (paths.length > 0) {
+                actionManager.getActionListenerMap().put(paths[0], (ActionListener) obj);
             }
-        }
+        });
     }
 
     private void initBuilderRegister() {
         EBuilderRegisterPackage declaredAnnotation = defaultFactory.getClass().getDeclaredAnnotation(EBuilderRegisterPackage.class);
         String[] packages = declaredAnnotation.packages();
-        for (String aPackage : packages) {
-            URL resource = ActionFactory.class.getClassLoader().getResource(aPackage.replace('.', '/'));
-            assert resource != null;
-            File path = new File(resource.getPath());
-            String[] list = path.list((dir, name) -> name.endsWith(".class"));
-            assert list != null;
-            for (String s : list) {
-                s = aPackage + "." + s.replace(".class", "");
 
-                try {
-                    Class<?> aClass = Class.forName(s);
-                    Object instance = aClass.newInstance();
-                    Method[] methods = aClass.getDeclaredMethods();
-                    for (Method method : methods) {
-                        if (method.isAnnotationPresent(EBuilderRegisterPath.class)) {
-                            EBuilderRegisterPath methodDeclaredAnnotation = method.getDeclaredAnnotation(EBuilderRegisterPath.class);
-                            if (methodDeclaredAnnotation.paths().length > 0) {
-                                EBuilder<?> invoke = (EBuilder<?>) method.invoke(instance);
-                                actionManager.getBuilderMap().put(methodDeclaredAnnotation.paths()[0], invoke);
-                            }
-                        }
-                    }
-                } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
-                    e.printStackTrace();
-                }
+        ClassUtil.scanPackagesMethod(packages, EBuilderRegisterPath.class, (annotation, obj) -> {
+            String[] paths = ((EBuilderRegisterPath) annotation).paths();
+            if (paths.length > 0) {
+                actionManager.getBuilderMap().put(paths[0], (EBuilder<?>) obj);
             }
-        }
+        });
     }
 
     private void initBinderRegister() {
         EBinderRegisterPackage declaredAnnotation = defaultFactory.getClass().getDeclaredAnnotation(EBinderRegisterPackage.class);
         String[] packages = declaredAnnotation.packages();
-        for (String aPackage : packages) {
-            URL resource = ActionFactory.class.getClassLoader().getResource(aPackage.replace('.', '/'));
-            assert resource != null;
-            File path = new File(resource.getPath());
-            String[] list = path.list((dir, name) -> name.endsWith(".class"));
-            assert list != null;
-            for (String s : list) {
-                s = aPackage + "." + s.replace(".class", "");
 
-                try {
-                    Class<?> aClass = Class.forName(s);
-                    Object instance = aClass.newInstance();
-                    Method[] methods = aClass.getDeclaredMethods();
-                    for (Method method : methods) {
-                        if (method.isAnnotationPresent(EBinderRegisterPath.class)) {
-                            EBinderRegisterPath methodDeclaredAnnotation = method.getDeclaredAnnotation(EBinderRegisterPath.class);
-                            if (methodDeclaredAnnotation.paths().length > 0) {
-                                EBinder<?, ?> invoke = (EBinder<?, ?>) method.invoke(instance);
-                                actionManager.getBinderMap().put(methodDeclaredAnnotation.paths()[0], invoke);
-                            }
-                        }
-                    }
-                } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
-                    e.printStackTrace();
-                }
+        ClassUtil.scanPackagesMethod(packages, EBinderRegisterPath.class, (annotation, obj) -> {
+            String[] paths = ((EBinderRegisterPath) annotation).paths();
+            if (paths.length > 0) {
+                actionManager.getBinderMap().put(paths[0], (EBinder<?, ?>) obj);
             }
-        }
+        });
     }
 
     private void initBind() {
         EBindPackage declaredAnnotation = defaultFactory.getClass().getDeclaredAnnotation(EBindPackage.class);
         String[] packages = declaredAnnotation.packages();
-        for (String aPackage : packages) {
-            URL resource = ActionFactory.class.getClassLoader().getResource(aPackage.replace('.', '/'));
-            assert resource != null;
-            File path = new File(resource.getPath());
-            String[] list = path.list((dir, name) -> name.endsWith(".class"));
-            assert list != null;
-            for (String s : list) {
-                s = aPackage + "." + s.replace(".class", "");
 
-                try {
-                    Class<?> aClass = Class.forName(s);
-                    Object instance = aClass.newInstance();
-                    Method[] methods = aClass.getDeclaredMethods();
-                    for (Method field : methods) {
-                        if (field.isAnnotationPresent(EBindPath.class)) {
-                            EBindPath methodDeclaredAnnotation = field.getDeclaredAnnotation(EBindPath.class);
-                            String[] paths = methodDeclaredAnnotation.paths();
-                            if (paths.length > 0) {
-                                Object obj = field.invoke(instance);
+        ClassUtil.scanPackagesMethod(packages, EBindPath.class, (annotation, obj) -> {
+            String[] paths = ((EBindPath) annotation).paths();
+            if (paths.length > 0) {
 
-                                if (paths.length == 1) {
-                                    actionManager.getActionListenerBind2ButtonBinderMap().put(paths[0], (EButton) obj);
-                                } else {
-                                    actionManager.getKeyboardActionBind2ComponentBinderMap().put((JComponent) obj, paths);
-                                }
-                            }
-                        }
-                    }
-                } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
-                    e.printStackTrace();
+                if (paths.length == 1) {
+                    actionManager.getActionListenerBind2ButtonBinderMap().put(paths[0], (EButton) obj);
+                } else {
+                    actionManager.getKeyboardActionBind2ComponentBinderMap().put((JComponent) obj, paths);
                 }
             }
-        }
+        });
     }
 
     public void builder() {
