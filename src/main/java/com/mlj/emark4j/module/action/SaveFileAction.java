@@ -8,11 +8,9 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultStyledDocument;
 import java.awt.event.ActionEvent;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 
 /**
  * 2022/09/24：
@@ -38,11 +36,11 @@ public class SaveFileAction implements EActionListener {
         }
 
         int len = 4096;
-        try (PrintWriter printWriter = new PrintWriter(new FileOutputStream(uri.getPath()))) {
+        try (PrintWriter printWriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(uri.getPath()), StandardCharsets.UTF_8))) {
             DefaultStyledDocument sourceDocument = ActionFactory.getInstance().getDocumentManager().getSourceDocument();
             int length = sourceDocument.getLength();
             for (int i = 0; i < length; i += len) {
-                printWriter.print(sourceDocument.getText(i, i + len > length ? length - i : len));
+                printWriter.print(new String(sourceDocument.getText(i, i + len > length ? length - i : len).getBytes(StandardCharsets.UTF_8), StandardCharsets.UTF_8));
             }
         } catch (IOException | BadLocationException ex) {
             ex.printStackTrace();
