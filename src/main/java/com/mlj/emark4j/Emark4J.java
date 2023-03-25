@@ -30,11 +30,7 @@ public class Emark4J {
         DocumentManager documentManager = DocumentManager.createNewDocumentManager(uri);
         // 3.初始化配置
         ActionFactory actionFactory = ActionFactory.getInstance();
-        try {
-            actionFactory.init(emark4JConfig, emark4JView, documentManager);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        actionFactory.init(emark4JConfig, emark4JView, documentManager);
 
         // 3.1.构建事件
         actionFactory.builder();

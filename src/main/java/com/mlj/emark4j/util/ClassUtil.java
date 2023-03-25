@@ -1,16 +1,21 @@
 package com.mlj.emark4j.util;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
+import java.util.Enumeration;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 /**
  * 2023/03/05：
+ * 包扫描参考：org.springframework.context.annotation.ClassPathBeanDefinitionScanner#scan
  *
  * @author MLJ
  */
@@ -21,10 +26,43 @@ public class ClassUtil {
                                     BiConsumer<Annotation, Field> fieldAnnotationConsumer,
                                     BiConsumer<Annotation, Object> methodAnnotationConsumer) {
         for (String aPackage : packages) {
-            URL resource = ClassUtil.class.getClassLoader().getResource(aPackage.replace('.', '/'));
+            String basePath = aPackage.replace('.', '/');
+            URL resource = ClassUtil.class.getClassLoader().getResource(basePath);
             assert resource != null;
+            String protocol = resource.getProtocol();
             File path = new File(resource.getPath());
-            scanPath(annotationClass, classAnnotationConsumer, fieldAnnotationConsumer, methodAnnotationConsumer, aPackage, path);
+
+            if ("jar".equals(protocol)) {
+                String path1 = resource.getPath();
+                path1 = path1.substring(path1.indexOf(':') + 2);
+                path1 = path1.substring(0, path1.indexOf('!')).replaceAll("\\\\", "/");
+                System.out.println(path1);
+                scanJarPath(annotationClass, classAnnotationConsumer, fieldAnnotationConsumer, methodAnnotationConsumer, aPackage, path1, basePath);
+            } else {
+                scanPath(annotationClass, classAnnotationConsumer, fieldAnnotationConsumer, methodAnnotationConsumer, aPackage, path);
+            }
+        }
+    }
+
+    private static void scanJarPath(Class<? extends Annotation> annotationClass,
+                                    Consumer<Annotation> classAnnotationConsumer,
+                                    BiConsumer<Annotation, Field> fieldAnnotationConsumer,
+                                    BiConsumer<Annotation, Object> methodAnnotationConsumer, String aPackage, String path, String basePath) {
+        try {
+            JarFile jarFile = new JarFile(path);
+            Enumeration<JarEntry> entries = jarFile.entries();
+            while (entries.hasMoreElements()) {
+                JarEntry jarEntry = entries.nextElement();
+                String name = jarEntry.getName();
+                if (name.startsWith(basePath) && name.endsWith(".class")) {
+                    System.out.println(name);
+                    String className = name.replace(".class", "").replaceAll("/", ".");
+                    System.out.println(className);
+                    scanClass(annotationClass, classAnnotationConsumer, fieldAnnotationConsumer, methodAnnotationConsumer, className);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

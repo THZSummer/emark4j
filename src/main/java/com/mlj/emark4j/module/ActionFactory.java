@@ -54,9 +54,9 @@ public class ActionFactory {
         return defaultFactory;
     }
 
-    public void init(Emark4JConfig config, Emark4JView view, DocumentManager documentManager) throws Exception {
+    public void init(Emark4JConfig config, Emark4JView view, DocumentManager documentManager) {
         if (null != ActionFactory.config && null != ActionFactory.view && null != ActionFactory.documentManager) {
-            throw new Exception("the factory has been init!");
+            throw new RuntimeException("the factory has been init!");
         } else {
             doInit(config, view, documentManager);
         }

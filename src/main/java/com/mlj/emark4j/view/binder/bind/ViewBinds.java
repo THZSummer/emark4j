@@ -57,7 +57,7 @@ public class ViewBinds {
 
     @EBindPath(paths = Constants.Path.Editor.EDIT_MODE)
     public EButton readonlyModeToggleButtonBind() {
-        return ActionFactory.getInstance().getView().getDocModeToggleButton();
+        return ActionFactory.getInstance().getView().getReadonlyModeToggleButton();
     }
 
     @EBindPath(paths = Constants.Path.File.OPEN)
