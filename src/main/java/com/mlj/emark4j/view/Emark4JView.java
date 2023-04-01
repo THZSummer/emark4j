@@ -1,6 +1,6 @@
 package com.mlj.emark4j.view;
 
-import com.mlj.emark4j.bean.Constants;
+import com.mlj.emark4j.core.bean.Constants;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,6 +14,7 @@ import java.util.Map;
  */
 public class Emark4JView {
     private final JFrame frame;    //主窗口
+    private final JDesktopPane desktopPane;
 
     private final Map<String, JTextPane> textPaneMap;
     private final Map<String, JScrollPane> textScrollPaneMap;
@@ -32,6 +33,7 @@ public class Emark4JView {
 
     public Emark4JView() {
         this.frame = new JFrame();
+        this.desktopPane = new JDesktopPane();
 
         this.textPaneMap = new HashMap<>();
         this.textScrollPaneMap = new HashMap<>();
@@ -58,7 +60,7 @@ public class Emark4JView {
 
         initFrame();
 
-        createNewTabbed();
+//        createNewTabbed();
 
         initRightToolBar();
 
@@ -66,16 +68,19 @@ public class Emark4JView {
 
         initModeToggleButton();
 
-        this.frame.setLayout(new BorderLayout());
-        this.frame.add(this.tabbedPane, BorderLayout.CENTER);
-        this.frame.add(this.leftTree, BorderLayout.WEST);
-        this.frame.add(this.rightToolBar, BorderLayout.EAST);
-        this.frame.add(this.topToolBar, BorderLayout.NORTH);
-        this.frame.add(this.bottomToolBar, BorderLayout.SOUTH);
+        initDesktopPanel();
+
+        this.frame.add(this.desktopPane);
     }
 
-    public void createNewTabbed() {
-        createNewTabbed("Untitled-" + (this.tabbedPane.getTabCount() + 1) + ".emk");
+    private void initDesktopPanel() {
+        this.desktopPane.setLayout(new BorderLayout());
+        this.desktopPane.add(this.tabbedPane, BorderLayout.CENTER);
+        this.desktopPane.add(this.leftTree, BorderLayout.WEST);
+        this.desktopPane.add(this.rightToolBar, BorderLayout.EAST);
+        this.desktopPane.add(this.topToolBar, BorderLayout.NORTH);
+        this.desktopPane.add(this.bottomToolBar, BorderLayout.SOUTH);
+        this.desktopPane.setBackground(Color.GREEN);
     }
 
     public void createNewTabbed(String tabbedName) {
@@ -130,6 +135,10 @@ public class Emark4JView {
 
     public JFrame getFrame() {
         return frame;
+    }
+
+    public JDesktopPane getDesktopPane() {
+        return desktopPane;
     }
 
     public String getTabTitle() {

@@ -1,7 +1,7 @@
 package com.mlj.emark4j.view.binder;
 
-import com.mlj.emark4j.module.ActionManager;
-import com.mlj.emark4j.module.EBinder;
+import com.mlj.emark4j.core.module.ActionManager;
+import com.mlj.emark4j.core.module.EBinder;
 
 import javax.swing.*;
 

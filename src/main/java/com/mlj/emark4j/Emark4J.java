@@ -1,14 +1,8 @@
 package com.mlj.emark4j;
 
-import com.mlj.emark4j.bean.Emark4JConfig;
-import com.mlj.emark4j.module.ActionFactory;
-import com.mlj.emark4j.module.DocumentManager;
-import com.mlj.emark4j.view.Emark4JView;
-
-import javax.swing.filechooser.FileSystemView;
-import java.io.File;
-import java.io.InputStream;
-import java.net.URI;
+import com.mlj.emark4j.core.Emark4JApplication;
+import com.mlj.emark4j.core.module.ActionFactory;
+import com.mlj.emark4j.view.ViewManager;
 
 /**
  * 2022/08/20：行为驱动式文档编辑，
@@ -16,35 +10,23 @@ import java.net.URI;
  * @author MLJ
  */
 public class Emark4J {
-    public static final InputStream CONFIG = Emark4J.class.getClassLoader().getResourceAsStream("emark4j.json");
 
     // 1.启动
     public static void main(String[] args) {
-        // 2.读取配置文件
-        Emark4JConfig emark4JConfig = new Emark4JConfig(CONFIG);
+        // 2.服务启动
+        Emark4JApplication.run(Emark4J.class, args);
+        // 3.初始化界面
 
-        // 4.初始化界面
-        Emark4JView emark4JView = new Emark4JView();
+        ViewManager.run(Emark4J.class, args);
 
-        URI uri = new File(FileSystemView.getFileSystemView().getHomeDirectory(), emark4JView.getTabTitle()).toURI();
-        DocumentManager documentManager = DocumentManager.createNewDocumentManager(uri);
-        // 3.初始化配置
-        ActionFactory actionFactory = ActionFactory.getInstance();
-        actionFactory.init(emark4JConfig, emark4JView, documentManager);
-
-        // 3.1.构建事件
-        actionFactory.builder();
-
-        // 显示窗口
-        emark4JView.show();
+        ActionFactory.setEmark4JWare(ViewManager.getInstance());
+        ActionFactory.initBind();
 
         // 5.注册事件
-        actionFactory.registerAction();
+        ActionFactory.getInstance().registerAction();
 
-        // 6.解析文件
-        // 7.展示文件
-        // 8.激活文件到可编辑
-        // 9.保存文件
+        ViewManager.registerTabbedSwitchListener();
+
+        ViewManager.getEmark4JView().show();
     }
-    // 10.关闭
 }

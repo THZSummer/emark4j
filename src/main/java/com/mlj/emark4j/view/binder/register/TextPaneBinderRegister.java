@@ -1,7 +1,7 @@
 package com.mlj.emark4j.view.binder.register;
 
-import com.mlj.emark4j.annotation.EBinderRegisterPath;
-import com.mlj.emark4j.module.EBinderRegister;
+import com.mlj.emark4j.core.annotation.EBinderRegisterPath;
+import com.mlj.emark4j.core.module.EBinderRegister;
 import com.mlj.emark4j.view.binder.KeyboardActionBind2ComponentBinder;
 
 /**
