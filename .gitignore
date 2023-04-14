@@ -76,5 +76,9 @@ fabric.properties
 # target files
 target/**
 
+
 # iml file
 emark4j.iml
+/**/target/**
+/emark4j-view/emark4j-view.iml
+/emark4j-core/emark4j-core.iml
