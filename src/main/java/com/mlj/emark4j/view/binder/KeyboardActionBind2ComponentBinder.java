@@ -1,6 +1,6 @@
 package com.mlj.emark4j.view.binder;
 
-import com.mlj.emark4j.core.module.ActionManager;
+import com.mlj.emark4j.core.module.ActionMapper;
 import com.mlj.emark4j.core.module.EBinder;
 
 import javax.swing.*;
@@ -10,9 +10,9 @@ import javax.swing.*;
  *
  * @author MLJ
  */
-public class KeyboardActionBind2ComponentBinder implements EBinder<ActionManager.ActionMapper, JComponent> {
+public class KeyboardActionBind2ComponentBinder implements EBinder<ActionMapper, JComponent> {
 
-    public void binder(ActionManager.ActionMapper actionMapper, JComponent component) {
+    public void binder(ActionMapper actionMapper, JComponent component) {
         component.registerKeyboardAction(actionMapper.getAction(), actionMapper.getaKeyStroke(), actionMapper.getaCondition());
     }
 }

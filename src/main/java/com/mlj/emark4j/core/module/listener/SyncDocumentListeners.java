@@ -1,6 +1,6 @@
 package com.mlj.emark4j.core.module.listener;
 
-import com.mlj.emark4j.core.module.DocumentManager;
+import com.mlj.emark4j.view.DocumentManagerV;
 
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -46,22 +46,22 @@ public abstract class SyncDocumentListeners {
     public static class SourceDocumentListener implements DocumentListener {
         @Override
         public void insertUpdate(DocumentEvent e) {
-            if (DocumentManager.getEditMode().isSource()) {
-                processInsertUpdate(e, DocumentManager.getMarkDocument());
+            if (DocumentManagerV.getEditMode().isSource()) {
+                processInsertUpdate(e, DocumentManagerV.getMarkDocument());
             }
         }
 
         @Override
         public void removeUpdate(DocumentEvent e) {
-            if (DocumentManager.getEditMode().isSource()) {
-                processRemoveUpdate(e, DocumentManager.getMarkDocument());
+            if (DocumentManagerV.getEditMode().isSource()) {
+                processRemoveUpdate(e, DocumentManagerV.getMarkDocument());
             }
         }
 
         @Override
         public void changedUpdate(DocumentEvent e) {
-            if (DocumentManager.getEditMode().isSource()) {
-                processChangeUpdate(e, DocumentManager.getMarkDocument());
+            if (DocumentManagerV.getEditMode().isSource()) {
+                processChangeUpdate(e, DocumentManagerV.getMarkDocument());
             }
         }
     }
@@ -70,22 +70,22 @@ public abstract class SyncDocumentListeners {
 
         @Override
         public void insertUpdate(DocumentEvent e) {
-            if (DocumentManager.getEditMode().isEmark()) {
-                processInsertUpdate(e, DocumentManager.getSourceDocument());
+            if (DocumentManagerV.getEditMode().isEmark()) {
+                processInsertUpdate(e, DocumentManagerV.getSourceDocument());
             }
         }
 
         @Override
         public void removeUpdate(DocumentEvent e) {
-            if (DocumentManager.getEditMode().isEmark()) {
-                processRemoveUpdate(e, DocumentManager.getSourceDocument());
+            if (DocumentManagerV.getEditMode().isEmark()) {
+                processRemoveUpdate(e, DocumentManagerV.getSourceDocument());
             }
         }
 
         @Override
         public void changedUpdate(DocumentEvent e) {
-            if (DocumentManager.getEditMode().isEmark()) {
-                processChangeUpdate(e, DocumentManager.getSourceDocument());
+            if (DocumentManagerV.getEditMode().isEmark()) {
+                processChangeUpdate(e, DocumentManagerV.getSourceDocument());
             }
         }
     }

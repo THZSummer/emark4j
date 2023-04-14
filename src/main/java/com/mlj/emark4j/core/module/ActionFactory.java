@@ -4,20 +4,14 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.mlj.emark4j.core.Emark4JWare;
 import com.mlj.emark4j.core.annotation.*;
-import com.mlj.emark4j.core.bean.Constants;
 import com.mlj.emark4j.core.bean.Emark4JConfig;
-import com.mlj.emark4j.core.module.listener.SyncDocumentListeners;
+import com.mlj.emark4j.core.module.action.ActionCenter;
+import com.mlj.emark4j.core.module.action.SimpleActionCenter;
 import com.mlj.emark4j.core.module.style.StyleManager;
 import com.mlj.emark4j.core.util.ClassUtil;
-import com.mlj.emark4j.view.EButton;
-import com.mlj.emark4j.view.Emark4JView;
-import com.mlj.emark4j.view.ViewManager;
-import com.mlj.emark4j.view.binder.ActionListenerBind2ButtonBinder;
 
-import javax.swing.*;
-import javax.swing.text.DefaultStyledDocument;
-import javax.swing.text.Style;
 import java.awt.event.ActionListener;
+import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.Map;
 import java.util.Objects;
@@ -28,33 +22,38 @@ import java.util.Objects;
  * @author MLJ
  */
 
-@EActionRegisterPackage(packages = "com.mlj.emark4j.core.module.action.register")
-@EBuilderRegisterPackage(packages = "com.mlj.emark4j.core.module.builder.register")
-@EBinderRegisterPackage(packages = "com.mlj.emark4j.view.binder.register")
-@EBindPackage(packages = "com.mlj.emark4j.view.binder.bind")
 public class ActionFactory implements Emark4JWare {
-    private static Emark4JConfig config;
+    private static final ActionFactory DEFAULT_ACTION_FACTORY;
 
-    private static Emark4JView view;
+
+    private static Emark4JConfig config;
 
     private static Emark4JWare emark4JWare;
 
     private static DocumentManager documentManager;
 
-    private static final ActionManager actionManager;
+    private final ActionManager actionManager;
 
-    private static final StyleManager styleManager;
+    private final StyleManager styleManager;
 
-    private static final ActionFactory defaultFactory;
+
+    private final ActionCenter actionCenter;
+
+    private final ElementManager elementManager;
 
     static {
-        actionManager = new ActionManager();
-        styleManager = new StyleManager();
-        defaultFactory = new ActionFactory();
+        DEFAULT_ACTION_FACTORY = new ActionFactory();
     }
 
     public static ActionFactory getInstance() {
-        return defaultFactory;
+        return DEFAULT_ACTION_FACTORY;
+    }
+
+    private ActionFactory() {
+        actionManager = ActionManager.getInstance();
+        styleManager = StyleManager.getInstance();
+        actionCenter = SimpleActionCenter.getInstance();
+        elementManager = ElementManager.getInstance();
     }
 
     public void init(Emark4JConfig config, DocumentManager documentManager) {
@@ -68,63 +67,66 @@ public class ActionFactory implements Emark4JWare {
     private void doInit(Emark4JConfig config, DocumentManager documentManager) {
         ActionFactory.config = Objects.requireNonNull(config);
         ActionFactory.documentManager = documentManager;
-
-        initActionRegister();
-        initBuilderRegister();
-        initBinderRegister();
-
-//        initBind();
     }
 
-    private void initActionRegister() {
-        EActionRegisterPackage declaredAnnotation = defaultFactory.getClass().getDeclaredAnnotation(EActionRegisterPackage.class);
+    public void initBase(Class<?> primarySource, String... args) {
+        initBuilderRegister(primarySource, args);
+        initActionD(primarySource, args);
+        initActionV(primarySource, args);
+        initActionVR(primarySource, args);
+    }
+
+    private void initActionD(Class<?> primarySource, String[] args) {
+        EActionCorePackage declaredAnnotation = primarySource.getDeclaredAnnotation(EActionCorePackage.class);
         String[] packages = declaredAnnotation.packages();
 
-        ClassUtil.scanPackagesMethod(packages, EActionRegisterPath.class, (annotation, obj) -> {
-            String[] paths = ((EActionRegisterPath) annotation).paths();
+        Map<String, Method> documentActionMap = actionCenter.getDocumentActionMap();
+        Map<String, Object> documentActionObjMap = actionCenter.getDocumentActionObjMap();
+        ClassUtil.scanPackagesMethod(packages, EActionCore.class, scanResult -> {
+            String[] paths = ((EActionCore) scanResult.getTargetMethodAnnotation()).paths();
             if (paths.length > 0) {
-                actionManager.getActionListenerMap().put(paths[0], (ActionListener) obj);
+                documentActionMap.put(paths[0], scanResult.getTargetMethod());
+                documentActionObjMap.put(paths[0], scanResult.getTargetInstance());
             }
         });
     }
 
-    private void initBuilderRegister() {
-        EBuilderRegisterPackage declaredAnnotation = defaultFactory.getClass().getDeclaredAnnotation(EBuilderRegisterPackage.class);
+    private void initActionV(Class<?> primarySource, String[] args) {
+        EActionPackage declaredAnnotation = primarySource.getDeclaredAnnotation(EActionPackage.class);
         String[] packages = declaredAnnotation.packages();
 
-        ClassUtil.scanPackagesMethod(packages, EBuilderRegisterPath.class, (annotation, obj) -> {
-            String[] paths = ((EBuilderRegisterPath) annotation).paths();
+        Map<String, Method> viewActionMap = actionCenter.getViewActionMap();
+        Map<String, Object> viewActionObjMap = actionCenter.getViewActionObjMap();
+        ClassUtil.scanPackagesMethod(packages, EAction.class, scanResult -> {
+            String[] paths = ((EAction) scanResult.getTargetMethodAnnotation()).paths();
             if (paths.length > 0) {
-                actionManager.getBuilderMap().put(paths[0], (EBuilder<?>) obj);
+                viewActionMap.put(paths[0], scanResult.getTargetMethod());
+                viewActionObjMap.put(paths[0], scanResult.getTargetInstance());
             }
         });
     }
 
-    private void initBinderRegister() {
-        EBinderRegisterPackage declaredAnnotation = defaultFactory.getClass().getDeclaredAnnotation(EBinderRegisterPackage.class);
+    private void initActionVR(Class<?> primarySource, String[] args) {
+        EActionRegisterPackage declaredAnnotation = primarySource.getDeclaredAnnotation(EActionRegisterPackage.class);
         String[] packages = declaredAnnotation.packages();
 
-        ClassUtil.scanPackagesMethod(packages, EBinderRegisterPath.class, (annotation, obj) -> {
-            String[] paths = ((EBinderRegisterPath) annotation).paths();
+        Map<String, ActionListener> actionListenerMap = actionManager.getActionListenerMap();
+        ClassUtil.scanPackagesMethodResponse(packages, EActionRegisterPath.class, scanResult -> {
+            String[] paths = ((EActionRegisterPath) scanResult.getTargetMethodAnnotation()).paths();
             if (paths.length > 0) {
-                actionManager.getBinderMap().put(paths[0], (EBinder<?, ?>) obj);
+                actionListenerMap.put(paths[0], (ActionListener) scanResult.getTargetMethodResponse());
             }
         });
     }
 
-    public static void initBind() {
-        EBindPackage declaredAnnotation = defaultFactory.getClass().getDeclaredAnnotation(EBindPackage.class);
+    private void initBuilderRegister(Class<?> primarySource, String... args) {
+        EBuilderRegisterPackage declaredAnnotation = primarySource.getDeclaredAnnotation(EBuilderRegisterPackage.class);
         String[] packages = declaredAnnotation.packages();
 
-        ClassUtil.scanPackagesMethod(packages, EBindPath.class, (annotation, obj) -> {
-            String[] paths = ((EBindPath) annotation).paths();
+        ClassUtil.scanPackagesMethodResponse(packages, EBuilderRegisterPath.class, scanResult -> {
+            String[] paths = ((EBuilderRegisterPath) scanResult.getTargetMethodAnnotation()).paths();
             if (paths.length > 0) {
-
-                if (paths.length == 1) {
-                    actionManager.getActionListenerBind2ButtonBinderMap().put(paths[0], (EButton) obj);
-                } else {
-                    actionManager.getKeyboardActionBind2ComponentBinderMap().put((JComponent) obj, paths);
-                }
+                actionManager.getBuilderMap().put(paths[0], (EBuilder<?>) scanResult.getTargetMethodResponse());
             }
         });
     }
@@ -141,7 +143,7 @@ public class ActionFactory implements Emark4JWare {
     }
 
     public static <T> T build(JSONObject jsonObject, Class<T> tClass, String pattern) {
-        EBuilder<?> eBuilder = actionManager.getBuilderMap().get(pattern);
+        EBuilder<?> eBuilder = ActionFactory.getInstance().actionManager.getBuilderMap().get(pattern);
         Object obj = eBuilder.builder(jsonObject);
         if (obj.getClass() == tClass) {
             return (T) obj;
@@ -149,65 +151,14 @@ public class ActionFactory implements Emark4JWare {
         return null;
     }
 
-    public void registerAction() {
-        binder();
-    }
-
-    public void binder() {
-        actionManager.getActionListenerBind2ButtonBinderMap().forEach((s, button) ->
-                ((ActionListenerBind2ButtonBinder) actionManager.getBinderMap().get(s))
-                        .binder(actionManager.getActionListenerMap().get(s), button));
-
-        registerTextPaneAction();
-    }
-
-    // tab
-    private void registerTextPaneAction() {
-        view = ViewManager.getEmark4JView();
-        JTextPane textPane = view.getTextPane();
-        DefaultStyledDocument styledDocument = DocumentManager.getMarkDocument();
-        textPane.setStyledDocument(styledDocument);
-        Style defaultStyle = styleManager.getMapperMap().get(Constants.DEFAULT_STYLE_NAME).getStyle();
-        textPane.setFont(styledDocument.getFont(defaultStyle));
-        textPane.setBackground(styledDocument.getBackground(defaultStyle));
-        textPane.setForeground(styledDocument.getForeground(defaultStyle));
-        textPane.setDisabledTextColor(styledDocument.getForeground(defaultStyle));
-
-        Map<String, ActionManager.ActionMapper> mapperMap = actionManager.getMapperMap();
-        for (Map.Entry<JComponent, String[]> entry : actionManager.getKeyboardActionBind2ComponentBinderMap().entrySet()) {
-            JComponent component = entry.getKey();
-            String[] strings = entry.getValue();
-            for (String string : strings) {
-                ActionManager.ActionMapper actionMapper = mapperMap.get(string);
-                component.registerKeyboardAction(actionMapper.getAction(), actionMapper.getaKeyStroke(), JComponent.WHEN_IN_FOCUSED_WINDOW);
-            }
-        }
-    }
-
     // tab
     private void registerSyncDocumentListener() {
-        DocumentManager.getMarkDocument().addDocumentListener(new SyncDocumentListeners.EmarkDocumentListener());
+//        DocumentManagerV.getMarkDocument().addDocumentListener(new SyncDocumentListeners.EmarkDocumentListener());
 
-        DocumentManager.getSourceDocument().addDocumentListener(new SyncDocumentListeners.SourceDocumentListener());
+//        DocumentManagerV.getSourceDocument().addDocumentListener(new SyncDocumentListeners.SourceDocumentListener());
     }
 
-    public static boolean isRead() {
-        return DocumentManager.getEditMode().isRead();
-    }
-
-    public static boolean isWrite() {
-        return DocumentManager.getEditMode().isWrite();
-    }
-
-    public static boolean isSource() {
-        return DocumentManager.getEditMode().isSource();
-    }
-
-    public static boolean isEmark() {
-        return DocumentManager.getEditMode().isEmark();
-    }
-
-    public void addActionMapper(ActionManager.ActionMapper actionMapper) {
+    public void addActionMapper(ActionMapper actionMapper) {
         actionManager.getMapperMap().put(actionMapper.getName(), actionMapper);
     }
 
@@ -216,7 +167,7 @@ public class ActionFactory implements Emark4JWare {
     }
 
     public DocumentManager getDocumentManager() {
-        return documentManager;
+        return DocumentManager.getNowDocumentManager();
     }
 
     public ActionManager getActionManager() {
@@ -235,15 +186,11 @@ public class ActionFactory implements Emark4JWare {
         return emark4JWare;
     }
 
-    private ActionFactory() {
-    }
-
     @Override
     public void openDocument(URI uri) {
         documentManager.openDocument(uri);
         emark4JWare.openDocument(uri);
 
-        registerTextPaneAction();
         registerSyncDocumentListener();
     }
 
@@ -251,6 +198,11 @@ public class ActionFactory implements Emark4JWare {
     public void updateDocument(long lineNum, String line) {
         documentManager.updateDocument(lineNum, line);
         emark4JWare.updateDocument(lineNum, line);
+    }
+
+    @Override
+    public String readDocument(long lineNum) {
+        return null;
     }
 
     @Override
@@ -273,5 +225,13 @@ public class ActionFactory implements Emark4JWare {
     public void renameDocumentTo(String newName) {
         documentManager.renameDocumentTo(newName);
         emark4JWare.renameDocumentTo(newName);
+    }
+
+    public ActionCenter getActionCenter() {
+        return actionCenter;
+    }
+
+    public ElementManager getElementManager() {
+        return elementManager;
     }
 }

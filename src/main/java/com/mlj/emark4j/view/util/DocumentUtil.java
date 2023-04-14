@@ -1,4 +1,4 @@
-package com.mlj.emark4j.core.util;
+package com.mlj.emark4j.view.util;
 
 import com.mlj.emark4j.view.ViewManager;
 

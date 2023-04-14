@@ -1,10 +1,10 @@
-package com.mlj.emark4j.core.module.action.register;
+package com.mlj.emark4j.view.actionv.event.register;
 
 import com.mlj.emark4j.core.annotation.EActionRegisterPath;
 import com.mlj.emark4j.core.bean.Constants;
 import com.mlj.emark4j.core.module.EActionRegister;
-import com.mlj.emark4j.core.module.action.OpenFileAction;
-import com.mlj.emark4j.core.module.action.SaveFileAction;
+import com.mlj.emark4j.view.actionv.event.OpenFileAction;
+import com.mlj.emark4j.view.actionv.event.SaveFileAction;
 
 /**
  * 2023/01/08：

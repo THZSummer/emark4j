@@ -13,6 +13,7 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
+@ERegisterPackage
 public @interface EActionRegisterPackage {
     String[] packages() default {};
 }

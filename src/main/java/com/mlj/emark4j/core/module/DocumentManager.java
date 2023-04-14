@@ -1,13 +1,8 @@
 package com.mlj.emark4j.core.module;
 
 import com.mlj.emark4j.core.Emark4JWare;
-import com.mlj.emark4j.core.bean.Constants;
-import com.mlj.emark4j.core.bean.EditMode;
+import com.mlj.emark4j.core.util.FileUtil;
 
-import javax.swing.filechooser.FileSystemView;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.DefaultStyledDocument;
-import java.io.File;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,23 +16,20 @@ public class DocumentManager implements Emark4JWare {
     private static final Map<String, DocumentManager> documentManagerMap = new HashMap<>();
     private static DocumentManager nowDocumentManager;
 
-    private final String name;
+    private String name;
     private final Map<Long, String> documentLines;
-    private final DefaultStyledDocument markDocument;
-    private final DefaultStyledDocument sourceDocument;
-    private final StringBuffer documentBuffer;
+    private final Map<Long, Long> documentLineLength;
     private URI documentURI;
-    private EditMode editMode;
+
+    private Long selectStart;
+    private Long selectEnd;
 
 
     private DocumentManager(URI uri) {
         this.name = uri.getPath();
         this.documentLines = new HashMap<>();
-        this.markDocument = new DefaultStyledDocument();
-        this.sourceDocument = new DefaultStyledDocument();
-        this.documentBuffer = new StringBuffer();
+        this.documentLineLength = new HashMap<>();
         this.documentURI = uri;
-        this.editMode = Constants.DEFAULT_DOC_MODE;
 
         documentManagerMap.put(name, this);
         nowDocumentManager = this;
@@ -52,8 +44,7 @@ public class DocumentManager implements Emark4JWare {
     }
 
     private static URI getUntitledUri() {
-        return new File(FileSystemView.getFileSystemView().getHomeDirectory(),
-                "Untitled-" + (documentManagerMap.size() + 1) + ".emk").toURI();
+        return FileUtil.getUntitledUri(documentManagerMap.size() + 1);
     }
 
     @Override
@@ -63,13 +54,13 @@ public class DocumentManager implements Emark4JWare {
 
     @Override
     public void updateDocument(long lineNum, String line) {
-        documentLines.put(lineNum, line);
-        DefaultStyledDocument document = getEditMode().isEmark() ? getMarkDocument() : getSourceDocument();
-        try {
-            document.insertString(document.getLength(), line + "\n", null);
-        } catch (BadLocationException e) {
-            e.printStackTrace();
-        }
+        getNowDocumentManager().documentLines.put(lineNum, line);
+        getNowDocumentManager().documentLineLength.put(lineNum, (long) line.length());
+    }
+
+    @Override
+    public String readDocument(long lineNum) {
+        return getNowDocumentManager().documentLines.get(lineNum);
     }
 
     @Override
@@ -94,36 +85,57 @@ public class DocumentManager implements Emark4JWare {
         documentManagerMap.remove(old);
     }
 
+    public static DocumentManager getNowDocumentManager() {
+        System.out.println(nowDocumentManager.documentURI.getPath());
+        return nowDocumentManager;
+    }
+
     public static String getName() {
-        return nowDocumentManager.name;
-    }
-
-    public static DefaultStyledDocument getMarkDocument() {
-        return nowDocumentManager.markDocument;
-    }
-
-    public static DefaultStyledDocument getSourceDocument() {
-        return nowDocumentManager.sourceDocument;
-    }
-
-    public static StringBuffer getDocumentBuffer() {
-        return nowDocumentManager.documentBuffer;
+        return getNowDocumentManager().name;
     }
 
 
     public static URI getDocumentURI() {
-        return nowDocumentManager.documentURI;
+        return getNowDocumentManager().documentURI;
     }
 
     public static void setDocumentURI(URI documentURI) {
-        nowDocumentManager.documentURI = documentURI;
+        getNowDocumentManager().documentURI = documentURI;
     }
 
-    public static EditMode getEditMode() {
-        return nowDocumentManager.editMode;
+    public Long getSelectStart() {
+        return selectStart;
     }
 
-    public static void setEditMode(EditMode editMode) {
-        nowDocumentManager.editMode = editMode;
+    public void setSelectStart(Long selectStart) {
+        getNowDocumentManager().selectStart = selectStart;
+    }
+
+    public Long getSelectEnd() {
+        return selectEnd;
+    }
+
+    public void setSelectEnd(Long selectEnd) {
+        getNowDocumentManager().selectEnd = selectEnd;
+    }
+
+    public long getSelectLineNumStart() {
+        long sum = 0;
+        for (long i = 1; i <= getNowDocumentManager().documentLineLength.size(); i++) {
+            if (getNowDocumentManager().selectStart <= (sum += getNowDocumentManager().documentLineLength.get(i))) {
+                return i;
+            }
+        }
+        return -1L;
+    }
+
+    public long getSelectLineNumEnd() {
+        long sum = 0;
+        for (long i = 1; i <= getNowDocumentManager().documentLineLength.size(); i++) {
+            if (getNowDocumentManager().selectEnd <= (sum += getNowDocumentManager().documentLineLength.get(i))) {
+                return i;
+            }
+        }
+        return -1L;
     }
 }

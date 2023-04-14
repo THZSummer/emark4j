@@ -24,7 +24,8 @@ public class ClassUtil {
     public static void scanPackages(String[] packages, Class<? extends Annotation> annotationClass,
                                     Consumer<Annotation> classAnnotationConsumer,
                                     BiConsumer<Annotation, Field> fieldAnnotationConsumer,
-                                    BiConsumer<Annotation, Object> methodAnnotationConsumer) {
+                                    Consumer<ScanResult> methodConsumer,
+                                    Consumer<ScanResult> methodInvokedConsumer) {
         for (String aPackage : packages) {
             String basePath = aPackage.replace('.', '/');
             URL resource = ClassUtil.class.getClassLoader().getResource(basePath);
@@ -37,9 +38,9 @@ public class ClassUtil {
                 path1 = path1.substring(path1.indexOf(':') + 2);
                 path1 = path1.substring(0, path1.indexOf('!')).replaceAll("\\\\", "/");
                 System.out.println(path1);
-                scanJarPath(annotationClass, classAnnotationConsumer, fieldAnnotationConsumer, methodAnnotationConsumer, aPackage, path1, basePath);
+                scanJarPath(annotationClass, classAnnotationConsumer, fieldAnnotationConsumer, methodConsumer, methodInvokedConsumer, aPackage, path1, basePath);
             } else {
-                scanPath(annotationClass, classAnnotationConsumer, fieldAnnotationConsumer, methodAnnotationConsumer, aPackage, path);
+                scanPath(annotationClass, classAnnotationConsumer, fieldAnnotationConsumer, methodConsumer, methodInvokedConsumer, aPackage, path);
             }
         }
     }
@@ -47,7 +48,8 @@ public class ClassUtil {
     private static void scanJarPath(Class<? extends Annotation> annotationClass,
                                     Consumer<Annotation> classAnnotationConsumer,
                                     BiConsumer<Annotation, Field> fieldAnnotationConsumer,
-                                    BiConsumer<Annotation, Object> methodAnnotationConsumer, String aPackage, String path, String basePath) {
+                                    Consumer<ScanResult> methodConsumer,
+                                    Consumer<ScanResult> methodInvokedConsumer, String aPackage, String path, String basePath) {
         try {
             JarFile jarFile = new JarFile(path);
             Enumeration<JarEntry> entries = jarFile.entries();
@@ -58,7 +60,7 @@ public class ClassUtil {
                     System.out.println(name);
                     String className = name.replace(".class", "").replaceAll("/", ".");
                     System.out.println(className);
-                    scanClass(annotationClass, classAnnotationConsumer, fieldAnnotationConsumer, methodAnnotationConsumer, className);
+                    scanClass(annotationClass, classAnnotationConsumer, fieldAnnotationConsumer, methodConsumer, methodInvokedConsumer, className);
                 }
             }
         } catch (IOException e) {
@@ -69,55 +71,83 @@ public class ClassUtil {
     private static void scanPath(Class<? extends Annotation> annotationClass,
                                  Consumer<Annotation> classAnnotationConsumer,
                                  BiConsumer<Annotation, Field> fieldAnnotationConsumer,
-                                 BiConsumer<Annotation, Object> methodAnnotationConsumer, String aPackage, File path) {
-        File[] files = path.listFiles();
+                                 Consumer<ScanResult> methodConsumer,
+                                 Consumer<ScanResult> methodInvokedConsumer, String aPackage, File path) {
+        File[] files = path.listFiles(f -> !f.getName().contains("$"));
         if (null != files) {
             for (File file : files) {
                 if (file.isDirectory()) {
-                    scanPath(annotationClass, classAnnotationConsumer, fieldAnnotationConsumer, methodAnnotationConsumer,
+                    scanPath(annotationClass, classAnnotationConsumer, fieldAnnotationConsumer, methodConsumer, methodInvokedConsumer,
                             aPackage + "." + file.getName(), file);
                 } else {
                     if (file.getName().endsWith("class")) {
                         String s = aPackage + "." + file.getName().replace(".class", "");
-                        scanClass(annotationClass, classAnnotationConsumer, fieldAnnotationConsumer, methodAnnotationConsumer, s);
+                        scanClass(annotationClass, classAnnotationConsumer, fieldAnnotationConsumer, methodConsumer, methodInvokedConsumer, s);
                     }
                 }
             }
         }
     }
 
-    private static void scanClass(Class<? extends Annotation> annotationClass,
+    /**
+     * 类扫描
+     *
+     * @param targetAnnotation        目标类
+     * @param classAnnotationConsumer classAnnotationConsumer
+     * @param fieldAnnotationConsumer fieldAnnotationConsumer
+     * @param methodConsumer          methodConsumer
+     * @param methodInvokedConsumer   methodInvokedConsumer
+     * @param className               className
+     */
+    private static void scanClass(Class<? extends Annotation> targetAnnotation,
                                   Consumer<Annotation> classAnnotationConsumer,
                                   BiConsumer<Annotation, Field> fieldAnnotationConsumer,
-                                  BiConsumer<Annotation, Object> methodAnnotationConsumer, String className) {
+                                  Consumer<ScanResult> methodConsumer,
+                                  Consumer<ScanResult> methodInvokedConsumer, String className) {
 
+        ScanResult scanResult = new ScanResult();
         try {
             // 1.类注解扫描
             Class<?> aClass = Class.forName(className);
+            scanResult.setTargetClass(aClass);
             if (null != classAnnotationConsumer) {
-                if (aClass.isAnnotationPresent(annotationClass)) {
-                    classAnnotationConsumer.accept(aClass.getDeclaredAnnotation(annotationClass));
+                if (aClass.isAnnotationPresent(targetAnnotation)) {
+                    Annotation aClassDeclaredAnnotation = aClass.getDeclaredAnnotation(targetAnnotation);
+                    scanResult.setTargetClassAnnotation(aClassDeclaredAnnotation);
+                    classAnnotationConsumer.accept(aClassDeclaredAnnotation);
                 }
             }
             // 2.属性注解扫描
             if (null != fieldAnnotationConsumer) {
                 Field[] declaredFields = aClass.getDeclaredFields();
                 for (Field declaredField : declaredFields) {
-                    if (declaredField.isAnnotationPresent(annotationClass)) {
-                        Annotation fieldDeclaredAnnotation = declaredField.getDeclaredAnnotation(annotationClass);
+                    scanResult.setTargetField(declaredField);
+                    if (declaredField.isAnnotationPresent(targetAnnotation)) {
+                        Annotation fieldDeclaredAnnotation = declaredField.getDeclaredAnnotation(targetAnnotation);
+                        scanResult.setTargetFieldAnnotation(fieldDeclaredAnnotation);
                         fieldAnnotationConsumer.accept(fieldDeclaredAnnotation, declaredField);
                     }
                 }
             }
-            // 3.方法注解扫描
-            if (null != methodAnnotationConsumer) {
+            // 3.方法注解扫描，不执行
+            if (null != methodConsumer || null != methodInvokedConsumer) {
                 Object instance = aClass.newInstance();
+                scanResult.setTargetInstance(instance);
                 Method[] methods = aClass.getDeclaredMethods();
                 for (Method method : methods) {
-                    if (method.isAnnotationPresent(annotationClass)) {
-                        Annotation methodDeclaredAnnotation = method.getDeclaredAnnotation(annotationClass);
-                        Object invoke = method.invoke(instance);
-                        methodAnnotationConsumer.accept(methodDeclaredAnnotation, invoke);
+                    if (method.isAnnotationPresent(targetAnnotation)) {
+                        scanResult.setTargetMethod(method);
+                        Annotation methodDeclaredAnnotation = method.getDeclaredAnnotation(targetAnnotation);
+                        scanResult.setTargetMethodAnnotation(methodDeclaredAnnotation);
+                        if (null != methodConsumer) {
+                            methodConsumer.accept(scanResult);
+                        }
+                        // 4.方法注解扫描，执行
+                        if (null != methodInvokedConsumer) {
+                            Object invoke = method.invoke(instance);
+                            scanResult.setTargetMethodResponse(invoke);
+                            methodInvokedConsumer.accept(scanResult);
+                        }
                     }
                 }
             }
@@ -126,8 +156,13 @@ public class ClassUtil {
         }
     }
 
+    public static void scanPackagesMethodResponse(String[] packages, Class<? extends Annotation> annotationClass,
+                                                  Consumer<ScanResult> methodInvokedConsumer) {
+        scanPackages(packages, annotationClass, null, null, null, methodInvokedConsumer);
+    }
+
     public static void scanPackagesMethod(String[] packages, Class<? extends Annotation> annotationClass,
-                                          BiConsumer<Annotation, Object> methodAnnotationConsumer) {
-        scanPackages(packages, annotationClass, null, null, methodAnnotationConsumer);
+                                          Consumer<ScanResult> methodConsumer) {
+        scanPackages(packages, annotationClass, null, null, methodConsumer, null);
     }
 }

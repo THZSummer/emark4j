@@ -13,6 +13,8 @@ public interface Emark4JWare {
 
     void updateDocument(long lineNum, String line);
 
+    String readDocument(long lineNum);
+
     void closeDocument(URI uri);
 
     void switchDocument(URI uri);

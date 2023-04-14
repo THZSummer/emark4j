@@ -1,8 +1,10 @@
 package com.mlj.emark4j.core.module;
 
+import com.mlj.emark4j.core.bean.StyleScope;
 import com.mlj.emark4j.view.EButton;
 
 import javax.swing.*;
+import javax.swing.text.Style;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,6 +15,8 @@ import java.util.Map;
  * @author MLJ
  */
 public class ActionManager {
+    private static final ActionManager ACTION_MANAGER;
+
     private final Map<String, ActionListener> actionListenerMap;
     private final Map<String, EBuilder<?>> builderMap;
     private final Map<String, EBinder<?, ?>> binderMap;
@@ -20,13 +24,30 @@ public class ActionManager {
     private final Map<JComponent, String[]> keyboardActionBind2ComponentBinderMap;
     private final Map<String, ActionMapper> mapperMap;
 
-    public ActionManager() {
+    /**
+     * style
+     */
+    private final Map<String, Style> styleMap;
+    private final Map<String, StyleScope> styleScopeMap;
+
+    static {
+        ACTION_MANAGER = new ActionManager();
+    }
+
+    public static ActionManager getInstance() {
+        return ACTION_MANAGER;
+    }
+
+    private ActionManager() {
         this.mapperMap = new HashMap<>();
         this.actionListenerMap = new HashMap<>();
         this.builderMap = new HashMap<>();
         this.binderMap = new HashMap<>();
         this.actionListenerBind2ButtonBinderMap = new HashMap<>();
         this.keyboardActionBind2ComponentBinderMap = new HashMap<>();
+
+        this.styleMap = new HashMap<>();
+        this.styleScopeMap = new HashMap<>();
     }
 
     public Map<JComponent, String[]> getKeyboardActionBind2ComponentBinderMap() {
@@ -53,37 +74,11 @@ public class ActionManager {
         return mapperMap;
     }
 
-    public static class ActionMapper {
-        private final String name;
-        private final ActionListener action;
-        private final KeyStroke aKeyStroke;
-        private final int aCondition;
+    public Map<String, Style> getStyleMap() {
+        return styleMap;
+    }
 
-        public ActionMapper(String name, ActionListener action, KeyStroke keyStroke, int whenFocused) {
-            this.name = name;
-            this.action = action;
-            this.aKeyStroke = keyStroke;
-            this.aCondition = whenFocused;
-        }
-
-        public ActionMapper(String name, ActionListener anAction, KeyStroke aKeyStroke) {
-            this(name, anAction, aKeyStroke, JComponent.WHEN_FOCUSED);
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public ActionListener getAction() {
-            return action;
-        }
-
-        public KeyStroke getaKeyStroke() {
-            return aKeyStroke;
-        }
-
-        public int getaCondition() {
-            return aCondition;
-        }
+    public Map<String, StyleScope> getStyleScopeMap() {
+        return styleScopeMap;
     }
 }

@@ -1,8 +1,9 @@
-package com.mlj.emark4j.core.module.action;
+package com.mlj.emark4j.view.actionv.event;
 
 import com.mlj.emark4j.core.module.ActionFactory;
 import com.mlj.emark4j.core.module.DocumentManager;
 import com.mlj.emark4j.core.module.EActionListener;
+import com.mlj.emark4j.view.DocumentManagerV;
 import com.mlj.emark4j.view.ViewManager;
 
 import javax.swing.*;
@@ -39,7 +40,7 @@ public class SaveFileAction implements EActionListener {
 
         int len = 4096;
         try (PrintWriter printWriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(uri.getPath()), StandardCharsets.UTF_8))) {
-            DefaultStyledDocument sourceDocument = DocumentManager.getSourceDocument();
+            DefaultStyledDocument sourceDocument = DocumentManagerV.getSourceDocument();
             int length = sourceDocument.getLength();
             for (int i = 0; i < length; i += len) {
                 printWriter.print(new String(sourceDocument.getText(i, i + len > length ? length - i : len).getBytes(StandardCharsets.UTF_8), StandardCharsets.UTF_8));

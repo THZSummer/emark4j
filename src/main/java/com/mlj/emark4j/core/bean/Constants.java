@@ -8,7 +8,7 @@ package com.mlj.emark4j.core.bean;
 public final class Constants {
     public static final String DEFAULT_STYLE_NAME = Path.Header.HEADER0;
 
-    public static final EditMode DEFAULT_DOC_MODE = EditMode.WRITE_EMARK;
+    public static final EditMode DEFAULT_DOC_MODE = EditMode.WRITE_SOURCE;
 
     public static final class Path {
 

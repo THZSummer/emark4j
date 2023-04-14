@@ -1,8 +1,8 @@
-package com.mlj.emark4j.core.module.action;
+package com.mlj.emark4j.view.actionv.event;
 
 import com.mlj.emark4j.core.bean.EditMode;
-import com.mlj.emark4j.core.module.DocumentManager;
 import com.mlj.emark4j.core.module.EActionListener;
+import com.mlj.emark4j.view.DocumentManagerV;
 import com.mlj.emark4j.view.ViewManager;
 
 import javax.swing.*;
@@ -19,12 +19,12 @@ public class EditModeToggleActions {
         @Override
         public void actionPerformed(ActionEvent e) {
             JTextPane textPane = ViewManager.getEmark4JView().getTextPane();
-            DocumentManager.setEditMode(DocumentManager.getEditMode().toggleDocMode());
-            EditMode editMode = DocumentManager.getEditMode();
+            DocumentManagerV.setEditMode(DocumentManagerV.getEditMode().toggleDocMode());
+            EditMode editMode = DocumentManagerV.getEditMode();
             if (editMode.isEmark()) {
-                textPane.setStyledDocument(DocumentManager.getMarkDocument());
+                textPane.setStyledDocument(DocumentManagerV.getMarkDocument());
             } else {
-                textPane.setStyledDocument(DocumentManager.getSourceDocument());
+                textPane.setStyledDocument(DocumentManagerV.getSourceDocument());
             }
             ViewManager.getEmark4JView().getDocModeToggleButton().setText(editMode.name());
         }
@@ -34,8 +34,8 @@ public class EditModeToggleActions {
         @Override
         public void actionPerformed(ActionEvent e) {
             JTextPane textPane = ViewManager.getEmark4JView().getTextPane();
-            DocumentManager.setEditMode(DocumentManager.getEditMode().toggleReadonlyMode());
-            EditMode editMode = DocumentManager.getEditMode();
+            DocumentManagerV.setEditMode(DocumentManagerV.getEditMode().toggleReadonlyMode());
+            EditMode editMode = DocumentManagerV.getEditMode();
             String text = "Readonly[false]";
             if (editMode.isRead()) {
                 text = "Readonly[true]";

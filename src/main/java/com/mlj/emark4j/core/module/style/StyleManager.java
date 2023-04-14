@@ -10,9 +10,19 @@ import java.util.Map;
  * @author MLJ
  */
 public class StyleManager {
+    private static final StyleManager STYLE_MANAGER;
+
     private final Map<String, StyleMapper> mapperMap;
 
-    public StyleManager() {
+    static {
+        STYLE_MANAGER = new StyleManager();
+    }
+
+    public static StyleManager getInstance() {
+        return STYLE_MANAGER;
+    }
+
+    private StyleManager() {
         this.mapperMap = new HashMap<>();
     }
 

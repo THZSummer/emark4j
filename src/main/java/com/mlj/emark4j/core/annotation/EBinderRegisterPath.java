@@ -12,6 +12,7 @@ import java.lang.annotation.Target;
  */
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
+@ERegisterPath
 public @interface EBinderRegisterPath {
     String[] paths() default {};
 }

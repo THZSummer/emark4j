@@ -1,9 +1,9 @@
-package com.mlj.emark4j.core.module.action.register;
+package com.mlj.emark4j.view.actionv.event.register;
 
 import com.mlj.emark4j.core.annotation.EActionRegisterPath;
 import com.mlj.emark4j.core.bean.Constants;
 import com.mlj.emark4j.core.module.EActionRegister;
-import com.mlj.emark4j.core.module.action.EditModeToggleActions;
+import com.mlj.emark4j.view.actionv.event.EditModeToggleActions;
 
 /**
  * 2023/01/08：

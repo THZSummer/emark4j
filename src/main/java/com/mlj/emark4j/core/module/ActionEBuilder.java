@@ -5,5 +5,5 @@ package com.mlj.emark4j.core.module;
  *
  * @author MLJ
  */
-public interface ActionEBuilder extends EBuilder<ActionManager.ActionMapper> {
+public interface ActionEBuilder extends EBuilder<ActionMapper> {
 }

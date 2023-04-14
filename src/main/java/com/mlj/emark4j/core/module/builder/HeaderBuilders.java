@@ -4,11 +4,12 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.mlj.emark4j.core.bean.Constants;
 import com.mlj.emark4j.core.bean.Font;
+import com.mlj.emark4j.core.bean.StyleScope;
 import com.mlj.emark4j.core.module.ActionEBuilder;
 import com.mlj.emark4j.core.module.ActionFactory;
-import com.mlj.emark4j.core.module.ActionManager;
-import com.mlj.emark4j.core.module.DocumentManager;
+import com.mlj.emark4j.core.module.ActionMapper;
 import com.mlj.emark4j.core.module.style.StyleManager;
+import com.mlj.emark4j.view.DocumentManagerV;
 
 import javax.swing.*;
 import javax.swing.text.DefaultStyledDocument;
@@ -28,11 +29,11 @@ public class HeaderBuilders {
     public static class HeaderEBuilder implements ActionEBuilder {
 
         @Override
-        public ActionManager.ActionMapper builder(JSONObject jsonObject) {
+        public ActionMapper builder(JSONObject jsonObject) {
             String path = jsonObject.getString("id");
             String pattern = jsonObject.getString("pattern");
 
-            DefaultStyledDocument styledDocument = DocumentManager.getMarkDocument();
+            DefaultStyledDocument styledDocument = DocumentManagerV.getMarkDocument();
             Style header = styledDocument.addStyle(path, Constants.DEFAULT_STYLE_NAME.equals(path) ? null : styledDocument.getStyle(Constants.DEFAULT_STYLE_NAME));
 
             com.mlj.emark4j.core.bean.Font font = ActionFactory.build(jsonObject.getJSONObject("font"), Font.class, "/element/font");
@@ -68,13 +69,15 @@ public class HeaderBuilders {
                 StyleConstants.ColorConstants.setBackground(header, ActionFactory.build(backColor, Color.class, "/element/color"));
             }
 
+            ActionFactory.getInstance().getActionManager().getStyleMap().put(path, header);
+            ActionFactory.getInstance().getActionManager().getStyleScopeMap().put(path, StyleScope.PARAGRAPH);
             ActionFactory.getInstance().addStyleMapper(new StyleManager.StyleMapper(path, pattern, header));
 
             JSONArray keymaps = jsonObject.getJSONArray("keymaps");
 
             KeyStroke keyStroke = ActionFactory.build(keymaps.getJSONObject(0), KeyStroke.class, "/element/keymap");
 
-            ActionManager.ActionMapper actionMapper = new ActionManager.ActionMapper(path, ActionFactory.getInstance().getActionManager().getActionListenerMap().get(path), keyStroke);
+            ActionMapper actionMapper = new ActionMapper(path, ActionFactory.getInstance().getActionManager().getActionListenerMap().get(path), keyStroke);
 
             ActionFactory.getInstance().addActionMapper(actionMapper);
             return actionMapper;
