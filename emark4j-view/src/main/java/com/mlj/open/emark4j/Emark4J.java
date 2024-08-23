@@ -1,8 +1,8 @@
 package com.mlj.open.emark4j;
 
 import com.mlj.open.emark4j.core.Emark4JApplication;
-import com.mlj.open.emark4j.core.annotation.EBindPackage;
-import com.mlj.open.emark4j.core.annotation.EBinderRegisterPackage;
+import com.mlj.open.emark4j.core.annotation.binder.EBindPackage;
+import com.mlj.open.emark4j.core.annotation.binder.EBinderRegisterPackage;
 import com.mlj.open.emark4j.core.module.ActionFactory;
 import com.mlj.open.emark4j.view.ViewManager;
 

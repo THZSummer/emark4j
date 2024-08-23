@@ -1,6 +1,6 @@
 package com.mlj.open.emark4j.view.actionv.event.register;
 
-import com.mlj.open.emark4j.core.annotation.EActionRegisterPath;
+import com.mlj.open.emark4j.core.annotation.action.EActionRegisterPath;
 import com.mlj.open.emark4j.core.bean.Constants;
 import com.mlj.open.emark4j.core.module.EActionRegister;
 import com.mlj.open.emark4j.view.actionv.event.HeaderAction;

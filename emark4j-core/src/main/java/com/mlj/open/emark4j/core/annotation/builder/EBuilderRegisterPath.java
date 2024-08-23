@@ -1,4 +1,6 @@
-package com.mlj.open.emark4j.core.annotation;
+package com.mlj.open.emark4j.core.annotation.builder;
+
+import com.mlj.open.emark4j.core.annotation.ERegisterPath;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -10,10 +12,9 @@ import java.lang.annotation.Target;
  *
  * @author MLJ
  */
-
-@Target(ElementType.TYPE)
+@Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-@ERegisterPackage
-public @interface EViewActionRegisterPackage {
-    String[] packages() default {};
+@ERegisterPath
+public @interface EBuilderRegisterPath {
+    String[] paths() default {};
 }

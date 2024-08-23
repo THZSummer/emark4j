@@ -1,4 +1,4 @@
-package com.mlj.open.emark4j.core.annotation;
+package com.mlj.open.emark4j.core.annotation.action;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -6,14 +6,13 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 2023/01/08：
+ * 2023/04/05：
  *
  * @author MLJ
  */
 
-@Target(ElementType.TYPE)
+@Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-@ERegisterPackage
-public @interface EDocumentActionRegisterPackage {
-    String[] packages() default {};
+public @interface EActionCore {
+    String[] paths() default {};
 }

@@ -1,9 +1,9 @@
 package com.mlj.open.emark4j.core;
 
-import com.mlj.open.emark4j.core.annotation.EActionCorePackage;
-import com.mlj.open.emark4j.core.annotation.EActionPackage;
-import com.mlj.open.emark4j.core.annotation.EActionRegisterPackage;
-import com.mlj.open.emark4j.core.annotation.EBuilderRegisterPackage;
+import com.mlj.open.emark4j.core.annotation.action.EActionCorePackage;
+import com.mlj.open.emark4j.core.annotation.action.EActionPackage;
+import com.mlj.open.emark4j.core.annotation.action.EActionRegisterPackage;
+import com.mlj.open.emark4j.core.annotation.builder.EBuilderRegisterPackage;
 import com.mlj.open.emark4j.core.bean.Emark4JConfig;
 import com.mlj.open.emark4j.core.module.ActionFactory;
 import com.mlj.open.emark4j.core.module.DocumentManager;

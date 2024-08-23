@@ -1,6 +1,6 @@
 package com.mlj.open.emark4j.view.binder.register;
 
-import com.mlj.open.emark4j.core.annotation.EBinderRegisterPath;
+import com.mlj.open.emark4j.core.annotation.binder.EBinderRegisterPath;
 import com.mlj.open.emark4j.core.bean.Constants;
 import com.mlj.open.emark4j.core.module.EBinderRegister;
 import com.mlj.open.emark4j.view.binder.ActionListenerBind2ButtonBinder;

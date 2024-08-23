@@ -18,7 +18,6 @@ public class DocumentManager implements Emark4JWare {
 
     private String name;
     private final Map<Long, String> documentLines;
-    private final Map<Long, Long> documentLineLength;
     private URI documentURI;
 
     private Long selectStart;
@@ -28,7 +27,6 @@ public class DocumentManager implements Emark4JWare {
     private DocumentManager(URI uri) {
         this.name = uri.getPath();
         this.documentLines = new HashMap<>();
-        this.documentLineLength = new HashMap<>();
         this.documentURI = uri;
 
         documentManagerMap.put(name, this);
@@ -55,7 +53,7 @@ public class DocumentManager implements Emark4JWare {
     @Override
     public void updateDocument(long lineNum, String line) {
         getNowDocumentManager().documentLines.put(lineNum, line);
-        getNowDocumentManager().documentLineLength.put(lineNum, (long) line.length());
+        System.out.println(documentLines.toString());
     }
 
     @Override
@@ -121,8 +119,10 @@ public class DocumentManager implements Emark4JWare {
 
     public long getSelectLineNumStart() {
         long sum = 0;
-        for (long i = 1; i <= getNowDocumentManager().documentLineLength.size(); i++) {
-            if (getNowDocumentManager().selectStart <= (sum += getNowDocumentManager().documentLineLength.get(i))) {
+        Long start = getNowDocumentManager().getSelectStart();
+        Map<Long, String> lines = getNowDocumentManager().documentLines;
+        for (long i = 1; i <= lines.size(); i++) {
+            if (start <= (sum += lines.get(i).length())) {
                 return i;
             }
         }
@@ -131,8 +131,10 @@ public class DocumentManager implements Emark4JWare {
 
     public long getSelectLineNumEnd() {
         long sum = 0;
-        for (long i = 1; i <= getNowDocumentManager().documentLineLength.size(); i++) {
-            if (getNowDocumentManager().selectEnd <= (sum += getNowDocumentManager().documentLineLength.get(i))) {
+        Long end = getNowDocumentManager().selectEnd;
+        Map<Long, String> lines = getNowDocumentManager().documentLines;
+        for (long i = 1; i <= lines.size(); i++) {
+            if (end <= (sum += lines.get(i).length())) {
                 return i;
             }
         }

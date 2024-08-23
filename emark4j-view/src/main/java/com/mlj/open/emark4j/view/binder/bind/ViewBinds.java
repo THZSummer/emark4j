@@ -1,6 +1,6 @@
 package com.mlj.open.emark4j.view.binder.bind;
 
-import com.mlj.open.emark4j.core.annotation.EBindPath;
+import com.mlj.open.emark4j.core.annotation.binder.EBindPath;
 import com.mlj.open.emark4j.core.bean.Constants;
 import com.mlj.open.emark4j.view.EButton;
 import com.mlj.open.emark4j.view.ViewManager;

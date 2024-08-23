@@ -1,6 +1,6 @@
 package com.mlj.open.emark4j.view.actionv.view;
 
-import com.mlj.open.emark4j.core.annotation.EAction;
+import com.mlj.open.emark4j.core.annotation.action.EAction;
 import com.mlj.open.emark4j.core.bean.Constants;
 import com.mlj.open.emark4j.core.module.ActionFactory;
 import com.mlj.open.emark4j.view.DocumentManagerV;
@@ -86,6 +86,7 @@ public class HeaderActionsView {
     private void sourceModeAction(String name) {
         DefaultStyledDocument sourceDocument = DocumentManagerV.getSourceDocument();
 
+        // 获取根元素
         Element defaultRootElement = sourceDocument.getDefaultRootElement();
 
         int lineIndexStart = defaultRootElement.getElementIndex(DocumentUtil.getSelectionStart());
@@ -93,7 +94,9 @@ public class HeaderActionsView {
 
         for (int i = lineIndexStart; i <= lineIndexEnd; i++) {
             try {
+                // 获取当前段落元素
                 Element element = defaultRootElement.getElement(i);
+                // 获取文档
                 Document paragraphDocument = element.getDocument();
                 String readDocument = ActionFactory.getInstance().getDocumentManager().readDocument(i + 1);
                 System.out.println(MessageFormat.format("View=[{0}][{1}]",

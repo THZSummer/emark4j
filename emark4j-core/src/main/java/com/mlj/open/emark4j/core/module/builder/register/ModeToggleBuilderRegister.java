@@ -1,6 +1,6 @@
 package com.mlj.open.emark4j.core.module.builder.register;
 
-import com.mlj.open.emark4j.core.annotation.EBuilderRegisterPath;
+import com.mlj.open.emark4j.core.annotation.builder.EBuilderRegisterPath;
 import com.mlj.open.emark4j.core.bean.Constants;
 import com.mlj.open.emark4j.core.module.EBuilderRegister;
 import com.mlj.open.emark4j.core.module.builder.ModeToggleBuilders;

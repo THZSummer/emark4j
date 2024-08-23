@@ -1,6 +1,6 @@
 package com.mlj.open.emark4j.view.actionv.view;
 
-import com.mlj.open.emark4j.core.annotation.EAction;
+import com.mlj.open.emark4j.core.annotation.action.EAction;
 import com.mlj.open.emark4j.core.bean.Constants;
 import com.mlj.open.emark4j.core.module.ActionFactory;
 import com.mlj.open.emark4j.core.module.DocumentManager;

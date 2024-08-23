@@ -1,10 +1,10 @@
 package com.mlj.open.emark4j.view;
 
 import com.mlj.open.emark4j.core.Emark4JWare;
-import com.mlj.open.emark4j.core.annotation.EBindPackage;
-import com.mlj.open.emark4j.core.annotation.EBindPath;
-import com.mlj.open.emark4j.core.annotation.EBinderRegisterPackage;
-import com.mlj.open.emark4j.core.annotation.EBinderRegisterPath;
+import com.mlj.open.emark4j.core.annotation.binder.EBindPackage;
+import com.mlj.open.emark4j.core.annotation.binder.EBindPath;
+import com.mlj.open.emark4j.core.annotation.binder.EBinderRegisterPackage;
+import com.mlj.open.emark4j.core.annotation.binder.EBinderRegisterPath;
 import com.mlj.open.emark4j.core.bean.Constants;
 import com.mlj.open.emark4j.core.bean.EditMode;
 import com.mlj.open.emark4j.core.module.*;
