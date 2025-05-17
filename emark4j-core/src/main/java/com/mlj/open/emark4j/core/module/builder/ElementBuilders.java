@@ -1,6 +1,7 @@
 package com.mlj.open.emark4j.core.module.builder;
 
-import com.alibaba.fastjson.JSONObject;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.mlj.open.emark4j.core.bean.Font;
 import com.mlj.open.emark4j.core.module.ElementEBuilder;
 
@@ -17,28 +18,28 @@ public class ElementBuilders {
     public static class ColorEBuilder implements ElementEBuilder<Color> {
 
         @Override
-        public Color builder(JSONObject jsonObject) {
-            int[] rgba = jsonObject.getObject("rgba", int[].class);
-            return new Color(rgba[0], rgba[1], rgba[2], rgba[3]);
+        public Color builder(JsonObject jsonObject) {
+            JsonArray jsonArray = jsonObject.getAsJsonArray("rgba");
+            return new Color(jsonArray.get(0).getAsInt(), jsonArray.get(1).getAsInt(), jsonArray.get(2).getAsInt(), jsonArray.get(3).getAsInt());
         }
     }
 
     public static class KeyMapEBuilder implements ElementEBuilder<KeyStroke> {
 
         @Override
-        public KeyStroke builder(JSONObject jsonObject) {
-            String[] keys = jsonObject.getObject("keys", String[].class);
-            return KeyStroke.getKeyStroke(keys[0] + " " + keys[1]);
+        public KeyStroke builder(JsonObject jsonObject) {
+            JsonArray jsonArray = jsonObject.getAsJsonArray("keys");
+            return KeyStroke.getKeyStroke(jsonArray.get(0).getAsString() + " " + jsonArray.get(1).getAsString());
         }
     }
 
     public static class FontEBuilder implements ElementEBuilder<com.mlj.open.emark4j.core.bean.Font> {
 
         @Override
-        public com.mlj.open.emark4j.core.bean.Font builder(JSONObject jsonObject) {
+        public com.mlj.open.emark4j.core.bean.Font builder(JsonObject jsonObject) {
             com.mlj.open.emark4j.core.bean.Font font = new Font();
-            String fontFamily = jsonObject.getString("fontFamily");
-            Integer fontSize = jsonObject.getInteger("fontSize");
+            String fontFamily = jsonObject.get("fontFamily").getAsString();
+            Integer fontSize = jsonObject.get("fontSize").getAsInt();
             if (null != fontFamily) font.setFontFamily(fontFamily);
             if (null != fontSize) font.setFontSize(fontSize);
             return font;

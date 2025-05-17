@@ -10,18 +10,18 @@ import java.lang.reflect.Method;
  *
  * @author MLJ
  */
-public class SimpleActionCenter extends ActionCenter {
+public class SimpleActionManager extends ActionManager {
 
-    private static final SimpleActionCenter simpleActionCenter;
+    private static final SimpleActionManager simpleActionCenter;
 
     static {
-        simpleActionCenter = new SimpleActionCenter();
+        simpleActionCenter = new SimpleActionManager();
     }
 
-    private SimpleActionCenter() {
+    private SimpleActionManager() {
     }
 
-    public static SimpleActionCenter getInstance() {
+    public static SimpleActionManager getInstance() {
         return simpleActionCenter;
     }
 

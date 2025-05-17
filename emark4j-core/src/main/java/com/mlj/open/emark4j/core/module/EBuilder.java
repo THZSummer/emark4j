@@ -1,6 +1,7 @@
 package com.mlj.open.emark4j.core.module;
 
-import com.alibaba.fastjson.JSONObject;
+
+import com.google.gson.JsonObject;
 
 /**
  * 2022/10/01：
@@ -9,5 +10,5 @@ import com.alibaba.fastjson.JSONObject;
  */
 public interface EBuilder<R> {
 
-    R builder(JSONObject jsonObject);
+    R builder(JsonObject jsonObject);
 }

@@ -4,14 +4,14 @@ import com.mlj.open.emark4j.core.annotation.action.EActionCorePackage;
 import com.mlj.open.emark4j.core.annotation.action.EActionPackage;
 import com.mlj.open.emark4j.core.annotation.action.EActionRegisterPackage;
 import com.mlj.open.emark4j.core.annotation.builder.EBuilderRegisterPackage;
-import com.mlj.open.emark4j.core.bean.Emark4JConfig;
+import com.mlj.open.emark4j.core.context.Emark4JContext;
+import com.mlj.open.emark4j.core.context.SimpleEmark4JContext;
 import com.mlj.open.emark4j.core.module.ActionFactory;
-import com.mlj.open.emark4j.core.module.DocumentManager;
 
 import java.io.InputStream;
 
 /**
- * 2023/04/01：
+ * 2023/04/01：启动类
  *
  * @author MLJ
  */
@@ -21,18 +21,19 @@ import java.io.InputStream;
 @EActionRegisterPackage(packages = "com.mlj.open.emark4j.view.actionv.event.register")
 public class Emark4JApplication {
 
-    public static final InputStream CONFIG = Emark4JApplication.class.getClassLoader().getResourceAsStream("emark4j.json");
+    public final Emark4JContext context = new SimpleEmark4JContext();
+
+    public final InputStream CONFIG = Emark4JApplication.class.getClassLoader().getResourceAsStream("emark4j.json");
 
     // 1.启动
-    public static void run(Class<?> primarySource, String... args) {
+    public Emark4JContext run(Class<?> primarySource, String... args) {
+
         // 2.读取配置文件
-        Emark4JConfig emark4JConfig = new Emark4JConfig(CONFIG);
 
         // 3.创建DocumentManager
-        DocumentManager documentManager = DocumentManager.createNewDocumentManager();
         // 4.初始化配置
         ActionFactory actionFactory = ActionFactory.getInstance();
-        actionFactory.init(emark4JConfig, documentManager);
+//        actionFactory.init(emark4JConfig, documentManager);
         actionFactory.initBase(Emark4JApplication.class, args);
 
         // 3.1.构建事件
@@ -48,5 +49,7 @@ public class Emark4JApplication {
         // 7.展示文件
         // 8.激活文件到可编辑
         // 9.保存文件
+
+        return context;
     }
 }

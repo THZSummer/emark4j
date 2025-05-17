@@ -1,7 +1,7 @@
 package com.mlj.open.emark4j.core.module.builder;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.mlj.open.emark4j.core.bean.Constants;
 import com.mlj.open.emark4j.core.bean.Font;
 import com.mlj.open.emark4j.core.bean.StyleScope;
@@ -28,14 +28,14 @@ public class HeaderBuilders {
     public static class HeaderEBuilder implements ActionEBuilder {
 
         @Override
-        public ActionMapper builder(JSONObject jsonObject) {
-            String path = jsonObject.getString("id");
-            String pattern = jsonObject.getString("pattern");
+        public ActionMapper builder(JsonObject jsonObject) {
+            String path = jsonObject.get("id").getAsString();
+            String pattern = jsonObject.get("pattern").getAsString();
 
             DefaultStyledDocument styledDocument = new DefaultStyledDocument();
             Style header = styledDocument.addStyle(path, Constants.DEFAULT_STYLE_NAME.equals(path) ? null : styledDocument.getStyle(Constants.DEFAULT_STYLE_NAME));
 
-            com.mlj.open.emark4j.core.bean.Font font = ActionFactory.build(jsonObject.getJSONObject("font"), Font.class, "/element/font");
+            com.mlj.open.emark4j.core.bean.Font font = ActionFactory.build(jsonObject.get("font").getAsJsonObject(), Font.class, "/element/font");
             if (null != font) {
                 StyleConstants.ParagraphConstants.setFontFamily(header, font.getFontFamily());
                 StyleConstants.ParagraphConstants.setFontSize(header, font.getFontSize());
@@ -58,8 +58,8 @@ public class HeaderBuilders {
                     header.addAttributes(header0);
                 }
             }
-            JSONObject foreColor = jsonObject.getJSONObject("foreColor");
-            JSONObject backColor = jsonObject.getJSONObject("backColor");
+            JsonObject foreColor = jsonObject.get("foreColor").getAsJsonObject();
+            JsonObject backColor = jsonObject.get("backColor").getAsJsonObject();
 
             if (null != foreColor) {
                 StyleConstants.ColorConstants.setBackground(header, ActionFactory.build(foreColor, Color.class, "/element/color"));
@@ -72,9 +72,9 @@ public class HeaderBuilders {
             ActionFactory.getInstance().getActionManager().getStyleScopeMap().put(path, StyleScope.PARAGRAPH);
             ActionFactory.getInstance().addStyleMapper(new StyleManager.StyleMapper(path, pattern, header));
 
-            JSONArray keymaps = jsonObject.getJSONArray("keymaps");
+            JsonArray keymaps = jsonObject.getAsJsonArray("keymaps");
 
-            KeyStroke keyStroke = ActionFactory.build(keymaps.getJSONObject(0), KeyStroke.class, "/element/keymap");
+            KeyStroke keyStroke = ActionFactory.build(keymaps.get(0).getAsJsonObject(), KeyStroke.class, "/element/keymap");
 
             ActionMapper actionMapper = new ActionMapper(path, ActionFactory.getInstance().getActionManager().getActionListenerMap().get(path), keyStroke);
 

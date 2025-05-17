@@ -71,18 +71,8 @@ public class DocumentManagerV implements Emark4JWare {
     }
 
     @Override
-    public void closeDocument(URI uri) {
-        documentManagerMap.remove(uri.getPath());
-    }
-
-    @Override
     public void switchDocument(URI uri) {
         nowDocumentManager = documentManagerMap.get(uri.getPath());
-    }
-
-    @Override
-    public void saveDocument(URI uri) {
-
     }
 
     @Override

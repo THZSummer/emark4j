@@ -1,6 +1,6 @@
 package com.mlj.open.emark4j.core.bean;
 
-import com.alibaba.fastjson.JSONObject;
+import com.google.gson.JsonObject;
 import com.mlj.open.emark4j.core.util.JsonUtil;
 
 import java.io.InputStream;
@@ -11,13 +11,13 @@ import java.io.InputStream;
  * @author MLJ
  */
 public class Emark4JConfig {
-    private final JSONObject jsonObject;
+    private final JsonObject jsonObject;
 
     public Emark4JConfig(InputStream configStream) {
         this.jsonObject = JsonUtil.read(configStream);
     }
 
-    public JSONObject getJsonObject() {
+    public JsonObject getJsonObject() {
         return jsonObject;
     }
 

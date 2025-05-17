@@ -15,11 +15,7 @@ public interface Emark4JWare {
 
     String readDocument(long lineNum);
 
-    void closeDocument(URI uri);
-
     void switchDocument(URI uri);
-
-    void saveDocument(URI uri);
 
     void renameDocumentTo(String newName);
 }

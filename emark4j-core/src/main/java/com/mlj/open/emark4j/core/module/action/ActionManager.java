@@ -11,7 +11,7 @@ import java.util.Map;
  *
  * @author MLJ
  */
-public abstract class ActionCenter {
+public abstract class ActionManager {
 
     private final Map<String, Method> documentActionMap = new HashMap<>();
     private final Map<String, Object> documentActionObjMap = new HashMap<>();

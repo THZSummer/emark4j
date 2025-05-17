@@ -1,14 +1,14 @@
 package com.mlj.open.emark4j.core.module;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.mlj.open.emark4j.core.Emark4JWare;
 import com.mlj.open.emark4j.core.annotation.action.*;
 import com.mlj.open.emark4j.core.annotation.builder.EBuilderRegisterPackage;
 import com.mlj.open.emark4j.core.annotation.builder.EBuilderRegisterPath;
 import com.mlj.open.emark4j.core.bean.Emark4JConfig;
-import com.mlj.open.emark4j.core.module.action.ActionCenter;
-import com.mlj.open.emark4j.core.module.action.SimpleActionCenter;
+import com.mlj.open.emark4j.core.module.action.ActionManager;
+import com.mlj.open.emark4j.core.module.action.SimpleActionManager;
 import com.mlj.open.emark4j.core.module.style.StyleManager;
 import com.mlj.open.emark4j.core.util.ClassUtil;
 
@@ -34,12 +34,12 @@ public class ActionFactory implements Emark4JWare {
 
     private static DocumentManager documentManager;
 
-    private final ActionManager actionManager;
+    private final com.mlj.open.emark4j.core.module.ActionManager actionManager;
 
     private final StyleManager styleManager;
 
 
-    private final ActionCenter actionCenter;
+    private final ActionManager actionCenter;
 
     private final ElementManager elementManager;
 
@@ -52,9 +52,9 @@ public class ActionFactory implements Emark4JWare {
     }
 
     private ActionFactory() {
-        actionManager = ActionManager.getInstance();
+        actionManager = com.mlj.open.emark4j.core.module.ActionManager.getInstance();
         styleManager = StyleManager.getInstance();
-        actionCenter = SimpleActionCenter.getInstance();
+        actionCenter = SimpleActionManager.getInstance();
         elementManager = ElementManager.getInstance();
     }
 
@@ -134,21 +134,21 @@ public class ActionFactory implements Emark4JWare {
     }
 
     public void builder() {
-        JSONArray jsonArray = config.getJsonObject().getJSONArray("styles");
+        JsonArray jsonArray = config.getJsonObject().getAsJsonArray("styles");
         for (int i = 0; i < jsonArray.size(); i++) {
-            JSONObject jsonObject = jsonArray.getJSONObject(i);
-            EBuilder<?> eBuilder = actionManager.getBuilderMap().get(jsonObject.getString("id"));
+            JsonObject jsonObject = jsonArray.get(i).getAsJsonObject();
+            EBuilder<?> eBuilder = actionManager.getBuilderMap().get(jsonObject.get("id").getAsString());
             if (null != eBuilder) {
                 eBuilder.builder(jsonObject);
             }
         }
     }
 
-    public static <T> T build(JSONObject jsonObject, Class<T> tClass, String pattern) {
+    public static <T> T build(JsonObject jsonObject, Class<T> tClass, String pattern) {
         EBuilder<?> eBuilder = ActionFactory.getInstance().actionManager.getBuilderMap().get(pattern);
         Object obj = eBuilder.builder(jsonObject);
         if (obj.getClass() == tClass) {
-            return (T) obj;
+            return tClass.cast(obj);
         }
         return null;
     }
@@ -172,7 +172,7 @@ public class ActionFactory implements Emark4JWare {
         return DocumentManager.getNowDocumentManager();
     }
 
-    public ActionManager getActionManager() {
+    public com.mlj.open.emark4j.core.module.ActionManager getActionManager() {
         return actionManager;
     }
 
@@ -208,19 +208,9 @@ public class ActionFactory implements Emark4JWare {
     }
 
     @Override
-    public void closeDocument(URI uri) {
-
-    }
-
-    @Override
     public void switchDocument(URI uri) {
         documentManager.switchDocument(uri);
         emark4JWare.switchDocument(uri);
-    }
-
-    @Override
-    public void saveDocument(URI uri) {
-
     }
 
     @Override
@@ -229,7 +219,7 @@ public class ActionFactory implements Emark4JWare {
         emark4JWare.renameDocumentTo(newName);
     }
 
-    public ActionCenter getActionCenter() {
+    public ActionManager getActionCenter() {
         return actionCenter;
     }
 

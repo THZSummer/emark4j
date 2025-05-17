@@ -121,19 +121,9 @@ public class ViewManager implements Emark4JWare {
     }
 
     @Override
-    public void closeDocument(URI uri) {
-
-    }
-
-    @Override
     public void switchDocument(URI uri) {
         documentManagerV.switchDocument(uri);
         refreshTabStatus();
-    }
-
-    @Override
-    public void saveDocument(URI uri) {
-
     }
 
     @Override

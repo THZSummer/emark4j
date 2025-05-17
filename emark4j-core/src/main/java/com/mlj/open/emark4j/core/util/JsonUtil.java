@@ -1,11 +1,10 @@
 package com.mlj.open.emark4j.core.util;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.util.Scanner;
+import java.io.InputStreamReader;
 
 /**
  * 2022/09/10：
@@ -14,23 +13,11 @@ import java.util.Scanner;
  */
 public class JsonUtil {
 
-    public static JSONObject read(InputStream configStream) {
-        try (Scanner scanner = new Scanner(configStream)) {
-
-            StringBuilder stringBuffer = new StringBuilder();
-            while (scanner.hasNextLine()) {
-                String nextLine = scanner.nextLine();
-                stringBuffer.append(nextLine);
-            }
-            return JSON.parseObject(String.valueOf(stringBuffer));
+    public static JsonObject read(InputStream configStream) {
+        try {
+            return JsonParser.parseReader(new InputStreamReader(configStream)).getAsJsonObject();
         } catch (Exception exception) {
             System.err.println("init config error " + exception.getMessage());
-        } finally {
-            try {
-                configStream.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         }
         return null;
     }
